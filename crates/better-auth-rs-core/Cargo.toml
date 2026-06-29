@@ -1,0 +1,17 @@
+[package]
+name = "better-auth-rs-core"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Framework-agnostic primitives for better-auth-rs (port of @better-auth/core): data model, OAuth2, social providers, error codes, plugin/context types."
+# Co-located upstream .ts references are read-only porting aids — never publish them.
+exclude = ["**/*.ts"]
+
+[lints]
+workspace = true
+
+[dependencies]
+# Phase 1+ wires serde/thiserror/etc. here via `{ workspace = true }`.

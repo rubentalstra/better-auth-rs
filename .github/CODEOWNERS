@@ -1,0 +1,11 @@
+# Default owner for everything in the repo.
+* @rubentalstra
+
+# Porting infrastructure + project memory.
+/.claude/        @rubentalstra
+/xtask/          @rubentalstra
+/port/           @rubentalstra
+
+# Crates.
+/crates/better-auth-rs-core/  @rubentalstra
+/crates/better-auth-rs/       @rubentalstra
