@@ -17,8 +17,14 @@ workspace = true
 
 [dependencies]
 better-auth-rs-core = { workspace = true }
-# Real dependencies are wired per-phase behind the features below
-# (Phase 1: sqlx/sea-query; Phase 4: axum; Phase 6: jsonwebtoken/openidconnect/...).
+async-trait = { workspace = true }
+serde_json = { workspace = true }
+# Optional, wired by features below (Phase 1: uuid for the memory adapter's id gen;
+# later: sqlx/sea-query, axum, jsonwebtoken/openidconnect, ...).
+uuid = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
 
 [features]
 # Default: the v1 transport + storage the project targets first.
@@ -27,7 +33,7 @@ default = ["axum", "sqlx-postgres"]
 # --- transport / storage (Rust-ecosystem names; wired in their phase) ---
 axum = []                # Phase 4 -> [dep:axum, dep:tower, dep:tower-http]
 sqlx-postgres = []       # Phase 1 -> [dep:sqlx, dep:sea-query, dep:sea-query-binder]
-memory-adapter = []      # in-memory adapter for tests/dev (upstream package name)
+memory-adapter = ["dep:uuid"]  # in-memory adapter for tests/dev (upstream package name)
 
 # --- plugin features: names are EXACTLY better-auth's plugin names (kebab-case) ---
 # v1-implemented (Phase 6):

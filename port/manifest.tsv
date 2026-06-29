@@ -139,8 +139,8 @@ crates/better-auth-rs/src/kysely_adapter/node-sqlite-dialect.ts	311	crates/bette
 crates/better-auth-rs/src/kysely_adapter/query-builders.ts	58	crates/better-auth-rs/src/kysely_adapter/query_builders.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
 crates/better-auth-rs/src/kysely_adapter/types.ts	1	crates/better-auth-rs/src/kysely_adapter/types.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
 crates/better-auth-rs/src/memory_adapter/index.ts	5	crates/better-auth-rs/src/memory_adapter/mod.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs/src/memory_adapter/memory-adapter.ts	575	crates/better-auth-rs/src/memory_adapter/memory_adapter.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs/src/memory_adapter/query-builders.ts	55	crates/better-auth-rs/src/memory_adapter/query_builders.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
+crates/better-auth-rs/src/memory_adapter/memory-adapter.ts	575	crates/better-auth-rs/src/adapters/memory.rs	done	high	a90d061de7cdbd60e796230aadf5d1082add1fe2
+crates/better-auth-rs/src/memory_adapter/query-builders.ts	55	crates/better-auth-rs/src/adapters/memory.rs	done	high	a90d061de7cdbd60e796230aadf5d1082add1fe2
 crates/better-auth-rs/src/mongo_adapter/index.ts	1	crates/better-auth-rs/src/mongo_adapter/mod.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
 crates/better-auth-rs/src/mongo_adapter/mongodb-adapter.ts	805	crates/better-auth-rs/src/mongo_adapter/mongodb_adapter.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
 crates/better-auth-rs/src/mongo_adapter/query-builders.ts	104	crates/better-auth-rs/src/mongo_adapter/query_builders.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
