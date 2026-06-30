@@ -353,7 +353,7 @@ crates/better-auth-rs-core/src/db/adapter/get-field-attributes.ts	62	crates/bett
 crates/better-auth-rs-core/src/db/adapter/get-field-name.ts	43	crates/better-auth-rs-core/src/db/adapter/get_field_name.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/adapter/get-id-field.ts	150	crates/better-auth-rs-core/src/db/adapter/get_id_field.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/adapter/get-model-name.ts	36	crates/better-auth-rs-core/src/db/adapter/get_model_name.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/db/adapter/index.ts	656	crates/better-auth-rs-core/src/db/adapter/mod.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/db/adapter/index.ts	656	crates/better-auth-rs-core/src/db/adapter/mod.rs	building	med	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/adapter/types.ts	134	crates/better-auth-rs-core/src/db/adapter/types.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/adapter/utils.ts	61	crates/better-auth-rs-core/src/db/adapter/utils.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/get-tables.ts	304	crates/better-auth-rs-core/src/db/get_tables.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
