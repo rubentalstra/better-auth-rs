@@ -530,17 +530,6 @@ crates/better-auth-rs-sso/src/samlify.ts	13	crates/better-auth-rs-sso/src/samlif
 crates/better-auth-rs-sso/src/types.ts	437	crates/better-auth-rs-sso/src/types.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
 crates/better-auth-rs-sso/src/utils.ts	143	crates/better-auth-rs-sso/src/utils.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
 crates/better-auth-rs-sso/src/version.ts	3	crates/better-auth-rs-sso/src/version.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/client.ts	40	crates/better-auth-rs-stripe/src/client.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/error-codes.ts	37	crates/better-auth-rs-stripe/src/error_codes.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/hooks.ts	514	crates/better-auth-rs-stripe/src/hooks.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/index.ts	475	crates/better-auth-rs-stripe/src/lib.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/metadata.ts	95	crates/better-auth-rs-stripe/src/metadata.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/middleware.ts	106	crates/better-auth-rs-stripe/src/middleware.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/routes.ts	2088	crates/better-auth-rs-stripe/src/routes.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/schema.ts	136	crates/better-auth-rs-stripe/src/schema.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/types.ts	501	crates/better-auth-rs-stripe/src/types.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/utils.ts	99	crates/better-auth-rs-stripe/src/utils.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
-crates/better-auth-rs-stripe/src/version.ts	3	crates/better-auth-rs-stripe/src/version.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
 crates/better-auth-rs-telemetry/src/detectors/detect-auth-config.ts	206	crates/better-auth-rs-telemetry/src/detectors/detect_auth_config.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
 crates/better-auth-rs-telemetry/src/detectors/detect-database.ts	22	crates/better-auth-rs-telemetry/src/detectors/detect_database.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2
 crates/better-auth-rs-telemetry/src/detectors/detect-framework.ts	23	crates/better-auth-rs-telemetry/src/detectors/detect_framework.rs	todo	-	a90d061de7cdbd60e796230aadf5d1082add1fe2

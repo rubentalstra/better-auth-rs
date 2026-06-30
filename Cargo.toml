@@ -18,7 +18,6 @@ members = [
     "crates/better-auth-rs-redis-storage",
     "crates/better-auth-rs-scim",
     "crates/better-auth-rs-sso",
-    "crates/better-auth-rs-stripe",
     "crates/better-auth-rs-telemetry",
     "xtask",
 ]
