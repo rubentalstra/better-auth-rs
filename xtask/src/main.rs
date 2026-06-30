@@ -286,10 +286,25 @@ fn sibling_rust_path(ts_path: &str) -> String {
         .unwrap_or_default();
     let base = p.file_name().and_then(|s| s.to_str()).unwrap_or("mod.ts");
     let file = rust_file_name(base, dir.ends_with("/src"));
-    if dir.is_empty() {
+    let out = if dir.is_empty() {
         file
     } else {
         format!("{dir}/{file}")
+    };
+    apply_renames(out)
+}
+
+/// Unavoidable file renames where the mechanical derivation would collide with a Rust reserved
+/// keyword (e.g. `type.ts` → `type.rs`, but `mod type;` is illegal and `r#type` is avoided). The
+/// port uses a chosen non-reserved name; the `.rs` module doc names its upstream `.ts`. Keep this
+/// table in sync with those files so the manifest stays an accurate 1:1 index.
+fn apply_renames(rs_path: String) -> String {
+    match rs_path.as_str() {
+        // db/type.ts → field.rs (`type` is a reserved keyword in Rust)
+        "crates/better-auth-rs-core/src/db/type.rs" => {
+            "crates/better-auth-rs-core/src/db/field.rs".into()
+        }
+        _ => rs_path,
     }
 }
 
@@ -309,7 +324,10 @@ fn derive_rust_path(rel: &str) -> String {
             format!("{}/{}", snake(other), inner),
         ),
     };
-    format!("{crate_root}/{}", to_rust_subpath(crate_root, &sub))
+    apply_renames(format!(
+        "{crate_root}/{}",
+        to_rust_subpath(crate_root, &sub)
+    ))
 }
 
 /// Map an inner subpath ("crypto/password.ts", "index.ts", ...) to its Rust file path.

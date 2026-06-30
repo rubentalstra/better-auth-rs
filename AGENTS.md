@@ -55,6 +55,13 @@ to `docs/` (Fumadocs site) and the vendored TS reference server the differential
    (Unlike Bun's Zig→Rust port, we do NOT ban async — better-auth is Promise-based.)
 3. **Keep it diffable.** Preserve control flow, ordering, names, and comments close to upstream
    so future upstream diffs re-port cleanly.
+   - **Always name the origin.** Every ported `.rs` MUST state its upstream `.ts` in the module
+     doc (e.g. `//! Upstream source: db/type.ts`). Rust-only files (no `.ts`) say so explicitly.
+     This keeps the 1:1 mapping identifiable even where the filename differs.
+   - **File naming:** `<stem>.ts` → `<snake_stem>.rs`, `index.ts` → `mod.rs`/`lib.rs`. When the
+     snake stem is a Rust **reserved keyword**, rename to a sensible non-reserved name (do NOT use
+     `r#`): e.g. `db/type.ts` → `db/field.rs`. Record the rename in `xtask`'s `apply_renames` so
+     the manifest stays accurate, and call it out in the file's module doc.
 4. **Per-file loop:** read `.ts` → write the Rust sibling (path from `manifest.tsv`) →
    `cargo check -p <crate>` → port the matching `*.test.ts` → `cargo nextest run` green →
    update the manifest row (`status` `drafted`→`building`→`done`, `confidence`, `upstream_sha`).

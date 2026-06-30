@@ -1,3 +1,9 @@
+//! Upstream source: NONE — this is Rust-only glue with no `.ts` counterpart.
+//!
+//! In better-auth (TypeScript) the adapter passes plain `Record<string, any>` objects, so no
+//! entity↔row conversion is needed. Rust has typed entities, so this bridge is required; there is
+//! no `mapping.ts` to diff against.
+//!
 //! Typed-entity ↔ dynamic-[`Row`] mapping.
 //!
 //! The [`DatabaseAdapter`](better_auth_rs_core::db::DatabaseAdapter) is schema-agnostic: it speaks

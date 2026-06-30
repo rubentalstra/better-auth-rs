@@ -1,3 +1,9 @@
+//! Upstream source: `db/type.ts` (co-located in this directory).
+//!
+//! This file is named `field.rs`, NOT `type.rs`, because `type` is a reserved keyword in Rust
+//! (`mod type;` is illegal and `r#type` is avoided). The manifest records the
+//! `db/type.ts → db/field.rs` mapping.
+//!
 //! The field/value type system (port of `@better-auth/core` `db/type.ts`).
 //!
 //! better-auth describes each model as a record of `DBFieldAttribute`s and carries row data
