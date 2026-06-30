@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
 
-use crate::db::field::{DbFieldType, DefaultValue, FieldAttribute};
+use crate::db::types::{DbFieldType, DefaultValue, FieldAttribute};
 
 /// Base account record (port of `BaseAccount`). `password` lives only on the credential provider.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

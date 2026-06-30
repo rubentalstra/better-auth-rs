@@ -15,7 +15,7 @@ pub use session::Session;
 pub use user::User;
 pub use verification::Verification;
 
-use crate::db::field::{BetterAuthDbSchema, TableSchema};
+use crate::db::types::{BetterAuthDbSchema, TableSchema};
 
 /// The four core tables every better-auth instance has, with default model names, in upstream
 /// order (`user`=1, `session`=2, `account`=3, `verification`=4).

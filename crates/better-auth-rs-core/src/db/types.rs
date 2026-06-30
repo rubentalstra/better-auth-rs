@@ -1,8 +1,9 @@
 //! Upstream source: `db/type.ts` (co-located in this directory).
 //!
-//! This file is named `field.rs`, NOT `type.rs`, because `type` is a reserved keyword in Rust
-//! (`mod type;` is illegal and `r#type` is avoided). The manifest records the
-//! `db/type.ts → db/field.rs` mapping.
+//! This file is named `types.rs`, NOT `type.rs`, because `type` is a reserved keyword in Rust
+//! (`mod type;` is illegal and `r#type` is avoided). The convention is to pluralize a
+//! reserved-keyword stem (`type` → `types`); the manifest records the `db/type.ts → db/types.rs`
+//! mapping.
 //!
 //! The field/value type system (port of `@better-auth/core` `db/type.ts`).
 //!
