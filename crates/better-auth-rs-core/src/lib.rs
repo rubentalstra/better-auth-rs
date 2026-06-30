@@ -11,6 +11,7 @@
 pub mod db;
 pub mod env;
 pub mod error;
+pub mod oauth2;
 pub mod types;
 pub mod utils;
 

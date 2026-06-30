@@ -382,7 +382,7 @@ crates/better-auth-rs-core/src/instrumentation/tracer.ts	95	crates/better-auth-r
 crates/better-auth-rs-core/src/oauth2/client-credentials-token.ts	126	crates/better-auth-rs-core/src/oauth2/client_credentials_token.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/oauth2/create-authorization-url.ts	89	crates/better-auth-rs-core/src/oauth2/create_authorization_url.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/oauth2/index.ts	34	crates/better-auth-rs-core/src/oauth2/mod.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/oauth2/oauth-provider.ts	222	crates/better-auth-rs-core/src/oauth2/oauth_provider.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/oauth2/oauth-provider.ts	222	crates/better-auth-rs-core/src/oauth2/oauth_provider.rs	building	med	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/oauth2/refresh-access-token.ts	157	crates/better-auth-rs-core/src/oauth2/refresh_access_token.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/oauth2/reject-redirects.ts	70	crates/better-auth-rs-core/src/oauth2/reject_redirects.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/oauth2/utils.ts	70	crates/better-auth-rs-core/src/oauth2/utils.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
