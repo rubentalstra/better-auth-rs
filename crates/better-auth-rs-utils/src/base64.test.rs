@@ -30,12 +30,12 @@ fn encodes_bytes() {
 #[test]
 fn decodes_base64() {
     let bytes = base64::decode(B64).unwrap();
-    assert_eq!(binary::decode(&bytes).unwrap(), PLAIN);
+    assert_eq!(binary::decode(&bytes, binary::BinaryEncoding::Utf8), PLAIN);
 }
 #[test]
 fn decodes_url_safe() {
     let bytes = base64::decode(B64_URL).unwrap();
-    assert_eq!(binary::decode(&bytes).unwrap(), PLAIN);
+    assert_eq!(binary::decode(&bytes, binary::BinaryEncoding::Utf8), PLAIN);
 }
 
 // RFC 4648 vectors + url-safe alphabet + round-trip + invalid char (retained, stronger).

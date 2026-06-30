@@ -1,54 +1,48 @@
-//! SHA-2 hashing (port of `hash.ts`).
+//! SHA hashing (port of `hash.ts`).
 //!
-//! Upstream's `createHash(algorithm, encoding?)` wraps Web Crypto `digest`. Here we expose the raw
-//! digest plus an encoded variant over the audited `sha2` crate. SHA-1 is intentionally omitted
-//! (better-auth never hashes with it); add it alongside its first consumer if ever needed.
+//! Upstream's `createHash(algorithm, encoding?).digest(input)` wraps Web Crypto `digest`, returning
+//! an `ArrayBuffer` (encoding `"none"`) or an encoded `string`. Here [`digest`] returns the raw
+//! bytes and [`digest_encoded`] returns the [`Encoded`] union (raw for `None`, else text), over the
+//! audited `sha1`/`sha2` crates. SHA-1 is included for parity (HOTP/TOTP use it) but is never used
+//! to hash secrets or passwords.
+//!
+//! Fidelity note: per `hash.ts`, the `"base64"` encoding uses the **standard** alphabet — unlike
+//! `hmac.ts`, which (quirk) uses URL-safe base64 for that same name.
 
+use sha1::Sha1;
 use sha2::{Digest, Sha256, Sha384, Sha512};
 
-use crate::{base64::base64_url, hex};
-
-/// Supported SHA-2 families.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum ShaFamily {
-    /// SHA-256 (32-byte digest).
-    Sha256,
-    /// SHA-384 (48-byte digest).
-    Sha384,
-    /// SHA-512 (64-byte digest).
-    Sha512,
-}
-
-/// Output encoding for [`digest_encoded`], mirroring upstream's `EncodingFormat`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Encoding {
-    /// Lowercase hex.
-    Hex,
-    /// URL-safe base64 with padding.
-    Base64Url,
-    /// URL-safe base64 without padding.
-    Base64UrlNoPad,
-}
+use crate::base64::{base64, base64_url};
+use crate::hex;
+pub use crate::types::{Encoded, EncodingFormat, ShaFamily};
 
 /// Compute the raw digest of `data` under `algorithm`.
 #[must_use]
 pub fn digest(algorithm: ShaFamily, data: impl AsRef<[u8]>) -> Vec<u8> {
     let data = data.as_ref();
     match algorithm {
+        ShaFamily::Sha1 => Sha1::digest(data).to_vec(),
         ShaFamily::Sha256 => Sha256::digest(data).to_vec(),
         ShaFamily::Sha384 => Sha384::digest(data).to_vec(),
         ShaFamily::Sha512 => Sha512::digest(data).to_vec(),
     }
 }
 
-/// Compute the digest of `data` and encode it.
+/// Compute the digest of `data` and encode it, mirroring `createHash(algorithm, encoding).digest`.
 #[must_use]
-pub fn digest_encoded(algorithm: ShaFamily, data: impl AsRef<[u8]>, encoding: Encoding) -> String {
+pub fn digest_encoded(
+    algorithm: ShaFamily,
+    data: impl AsRef<[u8]>,
+    encoding: EncodingFormat,
+) -> Encoded {
     let raw = digest(algorithm, data);
     match encoding {
-        Encoding::Hex => hex::encode(raw),
-        Encoding::Base64Url => base64_url::encode(raw, true),
-        Encoding::Base64UrlNoPad => base64_url::encode(raw, false),
+        EncodingFormat::None => Encoded::Raw(raw),
+        EncodingFormat::Hex => Encoded::Text(hex::encode(raw)),
+        // `hash.ts` uses the standard alphabet for `"base64"`.
+        EncodingFormat::Base64 => Encoded::Text(base64::encode(raw, true)),
+        EncodingFormat::Base64Url => Encoded::Text(base64_url::encode(raw, true)),
+        EncodingFormat::Base64UrlNoPad => Encoded::Text(base64_url::encode(raw, false)),
     }
 }
 
