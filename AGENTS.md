@@ -69,9 +69,12 @@ well-maintained, industry-standard crate.
   `crates/better-auth-rs/Cargo.toml` is the definitive feature list.
 - **Storage adapters and separate-package plugins are their own crates, NOT features** of
   `better-auth-rs`: storage = `better-auth-rs-memory-adapter`, `better-auth-rs-sqlx-adapter`,
+  `better-auth-rs-diesel-adapter` ([Diesel](https://diesel.rs)),
+  `better-auth-rs-seaorm-adapter` ([SeaORM](https://www.sea-ql.org/SeaORM/)),
   `better-auth-rs-redis-storage`; separate-package plugins = `better-auth-rs-api-key`,
   `-passkey`, `-sso`, `-scim`, `-oauth-provider`, …. Pick a storage backend by depending on its
-  adapter crate.
+  adapter crate. (better-auth's TS ORM adapters — Prisma / Drizzle / Kysely — map to our Rust ORM
+  adapters: **Diesel / SeaORM / SQLx**; MongoDB → a future mongodb adapter.)
 - `xtask` — manifest/sync tooling (std-only, no network).
 
 This repo is a **dual workspace**: Cargo for the Rust library; a pnpm workspace (Node) scoped only

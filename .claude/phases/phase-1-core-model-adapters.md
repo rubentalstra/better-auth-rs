@@ -13,16 +13,26 @@
 ## Design reference reading
 
 db schema (`user`/`session`/`account`/`verification`), `DBAdapter` types, `internal-adapter`,
-`with-hooks`, `kysely-adapter` (the sea-query analogue), `field-converter`/`get-migration` —
-read for the feature shape and behavior, then reimplement idiomatically in Rust.
+`with-hooks`, the TS ORM adapters (`prisma-adapter`/`drizzle-adapter`/`kysely-adapter` — whose Rust
+analogues are Diesel / SeaORM / SQLx, see below), `field-converter`/`get-migration` — read for the
+feature shape and behavior, then reimplement idiomatically in Rust.
 
 ## What to build
 
 - `DatabaseAdapter` trait: `create / find_one / find_many / count / update / update_many /
   delete / delete_many / transaction`, with `Where { field, value, operator, connector, mode }`
   and `WhereOperator` (eq/ne/lt/lte/gt/gte/in/not_in/contains/starts_with/ends_with).
-- `memory-adapter` (no DB) and `sqlx-postgres` adapter (sea-query builds the dynamic SQL,
-  sqlx executes; `sea-query-binder` bridges values).
+- Storage adapters are **separate crates**, each implementing the `CustomAdapter` contract:
+  - `better-auth-rs-memory-adapter` — in-memory, no DB (tests/dev).
+  - `better-auth-rs-sqlx-adapter` — SQLx (Postgres first); dynamic SQL via `sea-query` +
+    `sea-query-binder`.
+  - `better-auth-rs-diesel-adapter` — the [Diesel](https://diesel.rs) ORM.
+  - `better-auth-rs-seaorm-adapter` — the [SeaORM](https://www.sea-ql.org/SeaORM/) ORM.
+  - `better-auth-rs-redis-storage` — `SecondaryStorage` (sessions / rate-limit), not a full adapter.
+
+  These are the Rust analogues of better-auth's TS ORM adapters: **Prisma / Drizzle / Kysely →
+  Diesel / SeaORM / SQLx**; MongoDB → a future `better-auth-rs-mongodb-adapter`. We reuse mature,
+  industry-standard ORMs rather than reimplementing a query layer.
 
 ## Gates
 

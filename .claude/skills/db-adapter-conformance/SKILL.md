@@ -21,10 +21,16 @@ adapter must satisfy. We implement our own Rust trait-based conformance battery 
 
 ## How to run
 
-Run the `better-auth-rs-test-utils` battery against each adapter crate: the in-memory adapter
-(`better-auth-rs-memory-adapter`, no DB) and the SQLx/Postgres adapter
-(`better-auth-rs-sqlx-adapter`) against the docker-compose Postgres service —
-`cargo nextest run -p <adapter-crate> conformance`.
+Run the `better-auth-rs-test-utils` battery against each adapter crate —
+`cargo nextest run -p <adapter-crate> conformance`:
+
+- `better-auth-rs-memory-adapter` (in-memory, no DB),
+- `better-auth-rs-sqlx-adapter` (SQLx/Postgres, docker-compose),
+- `better-auth-rs-diesel-adapter` ([Diesel](https://diesel.rs)),
+- `better-auth-rs-seaorm-adapter` ([SeaORM](https://www.sea-ql.org/SeaORM/)).
+
+Diesel + SeaORM are our Rust analogues of better-auth's Prisma/Drizzle/Kysely TS ORM adapters; the
+same battery proves them all.
 
 ## Notes
 
