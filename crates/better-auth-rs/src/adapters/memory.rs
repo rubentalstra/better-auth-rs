@@ -34,10 +34,6 @@ impl MemoryAdapter {
     }
 }
 
-fn generate_id() -> String {
-    format!("{}", uuid::Uuid::new_v4().simple())
-}
-
 // --- value helpers ---------------------------------------------------------
 
 fn as_f64(v: &DbValue) -> Option<f64> {
@@ -218,7 +214,7 @@ impl DatabaseAdapter for MemoryAdapter {
             data.remove("id");
         }
         data.entry("id".into())
-            .or_insert_with(|| DbValue::String(generate_id()));
+            .or_insert_with(|| DbValue::String(super::generate_id()));
         self.store().entry(model).or_default().push(data.clone());
         Ok(project(data, select.as_deref()))
     }

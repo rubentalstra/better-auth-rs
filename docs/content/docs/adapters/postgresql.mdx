@@ -1,0 +1,96 @@
+---
+title: PostgreSQL
+description: Use PostgreSQL with better-auth-rs via the built-in SQLx adapter.
+---
+
+better-auth-rs talks to PostgreSQL through the built-in **SQLx** adapter, enabled by the
+`sqlx-postgres` Cargo feature (on by default). It implements the same model-keyed
+`DatabaseAdapter` contract as every other backend, so the data model, HTTP API, and plugins
+behave identically to the TypeScript better-auth.
+
+## Enable the feature
+
+`sqlx-postgres` is part of the default features:
+
+```toml
+[dependencies]
+better-auth-rs = { version = "0.1", features = ["axum", "sqlx-postgres"] }
+```
+
+It pulls in SQLx with the Postgres driver, `rustls` TLS, and the `json`/`time`/`uuid` type
+support the adapter needs. No OpenSSL is required.
+
+## Connect
+
+Build the adapter from a connection string or an existing `sqlx::PgPool`:
+
+```rust
+use better_auth_rs::adapters::sqlx_postgres::SqlxPostgresAdapter;
+
+// From a DATABASE_URL (creates its own pool)
+let adapter = SqlxPostgresAdapter::connect(&std::env::var("DATABASE_URL")?).await?;
+
+// …or from a pool you already manage
+let pool = sqlx::postgres::PgPoolOptions::new()
+    .max_connections(10)
+    .connect(&database_url)
+    .await?;
+let adapter = SqlxPostgresAdapter::from_pool(pool);
+```
+
+The resulting adapter is what you hand to the auth builder (the builder lands in a later
+milestone); today it can be driven directly through the `DatabaseAdapter` trait.
+
+## Migrations
+
+The core schema is four tables — `user`, `session`, `account`, `verification` — derived from the
+canonical schema registry. Generate and apply the `CREATE TABLE` statements for the enabled
+features:
+
+```rust
+// Apply the schema for the core tables (idempotent: CREATE TABLE IF NOT EXISTS).
+adapter.run_migrations(&better_auth_rs::core::db::core_tables()).await?;
+```
+
+You can also obtain the SQL without running it (for review or for piping into your own migration
+tool):
+
+```rust
+let statements: Vec<String> =
+    SqlxPostgresAdapter::schema_sql(&better_auth_rs::core::db::core_tables());
+```
+
+Each table gets a primary-key `id`, the columns declared by the model, `UNIQUE` constraints
+(e.g. `user.email`, `session.token`), and `FOREIGN KEY … ON DELETE CASCADE` references
+(e.g. `session.user_id → user.id`).
+
+## Customizing the schema
+
+The schema registry is data, so the usual better-auth customizations map directly:
+
+- **Custom table names** — set a model's `model_name`.
+- **Custom column names** — set a field's `field_name`.
+- **Extra columns** — add fields to a model (additional fields).
+- **Plural table names** — opt in when constructing the adapter.
+
+## PostgreSQL specifics
+
+The adapter matches better-auth's Postgres value handling:
+
+- **Booleans, timestamps, and JSON are native** — stored as `boolean`, `timestamptz`, and `jsonb`.
+- **Arrays are stored as JSON text**, not native PG arrays (parity with upstream).
+- **UUIDs are supported** for id strategies that use them.
+- **Case-insensitive matching** uses native `ILIKE` for `contains`/`starts_with`/`ends_with`,
+  and `LOWER(col) = LOWER($n)` for equality/membership — matching the upstream Postgres path.
+
+## Using a non-default schema
+
+To place the tables in a schema other than `public`, set the `search_path` on the connection,
+e.g. in the connection string:
+
+```text
+postgres://user:pass@host/db?options=-c%20search_path%3Dauth
+```
+
+or on the pool (`options: "-c search_path=auth"`). Create and grant the schema first
+(`CREATE SCHEMA auth; GRANT … ; ALTER DEFAULT PRIVILEGES …`), and verify with `SHOW search_path;`.
