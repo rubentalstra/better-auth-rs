@@ -1,4 +1,4 @@
-//! Upstream source: error/index.ts
+//! Upstream reference: error/index.ts
 //!
 //! `BetterAuthError` (a JS `Error` subclass — its blanked `stack` is a JS quirk with no analog) and
 //! `APIError` (extends `better-call`'s `APIError`). Per "don't reinvent the wheel", `APIError` is

@@ -1,4 +1,4 @@
-//! Upstream source: utils/error-codes.ts
+//! Upstream reference: utils/error-codes.ts
 //!
 //! Almost the entire file is compile-time TypeScript with no runtime analog:
 //! `UpperLetter`/`SpecialCharacter`/`IsValidUpperSnakeCase`/`InvalidKeyError`/`ValidateErrorCodes`

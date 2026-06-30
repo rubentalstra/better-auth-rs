@@ -1,30 +1,32 @@
 ---
 name: writing-parity-tests
-description: How to port a better-auth *.test.ts to a Rust test and add a differential vector so the port is proven behaviorally identical. Use when porting any file that has a sibling test, or when adding test coverage.
+description: How to write Rust behavior tests for a better-auth-rs feature, translating the useful cases from the sibling *.test.ts. Use when implementing any unit that has a sibling test, or when adding test coverage.
 ---
 
-# Writing parity tests
+# Writing behavior tests
 
-Two layers prove every port: the ported unit/integration test (Rust) and a differential vector
-(TS server vs Rust server).
+We prove each feature with our **own Rust tests** asserting correct, secure behavior. There is **no
+TS-vs-Rust differential harness** and **no wire/byte-format parity** with better-auth — a Rust
+client talks to a Rust server.
 
-## Port the unit test
+## Translate the useful cases
 
-- Translate the sibling `*.test.ts` into a Rust test **co-located with the module it covers**
-  (extend that module's test section; don't scatter new files).
+- The sibling `*.test.ts` is a **source of test cases**, not a spec to match byte-for-byte. Pull
+  the cases worth keeping (edge cases, parsing tables, error conditions) into a Rust test
+  **co-located with the module it covers** — a `<stem>.test.rs` child module wired with
+  `#[cfg(test)] #[path = "<stem>.test.rs"] mod <stem>_tests;` (header
+  `#![allow(clippy::unwrap_used, clippy::expect_used)]`).
 - A test must be able to fail for the right reason. No flaky/time-based waits — await the
   condition, not the clock.
-- For internal byte-format assertions (e.g. exact scrypt hash bytes), assert **behavior**
-  instead (hash then verify round-trips), since crypto/storage are idiomatic Rust.
-- DB-touching tests use the docker-compose Postgres service or the `memory-adapter`.
-
-## Add a differential vector
-
-- A vector is a request (method, path, headers, body) + the normalization rules for dynamic
-  fields (ids, timestamps, tokens, cookie values).
-- `cargo xtask differential` boots the vendored TS server + the Rust server and asserts identical
-  status / JSON body / `Set-Cookie` semantics for each vector.
+- Assert **behavior**, not internal byte formats: hash-then-verify round-trips; a signed cookie
+  verifies and a tampered one is rejected; an expired token is refused. (Crypto/cookies are audited
+  crates with their own formats.)
+- For security-sensitive logic (auth flows, token/session handling, input parsing), add thorough
+  edge-case and negative tests — the platform's security rests on them.
+- DB-touching tests use the `memory-adapter` (no DB) or the docker-compose Postgres service.
 
 ## Win condition
 
-The ported behavior test passes in Rust **and** its differential vector matches the TS server.
+The feature works correctly and **securely**, is built on audited crates, and is covered by passing
+Rust tests (`cargo nextest run`), with `clippy --all-targets -- -D warnings` and `fmt --all --check`
+clean.

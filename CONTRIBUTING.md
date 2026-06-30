@@ -1,14 +1,15 @@
 # Contributing to better-auth-rs
 
-Thanks for helping build a faithful Rust port of better-auth!
+Thanks for helping build a secure, idiomatic Rust reimplementation inspired by better-auth!
 
 ## Ground rules
 
-- **The reference is the spec.** For each module, the **co-located sibling `.ts`** (same folder as
-  the `.rs`, both in `crates/*/src/`) is the source of truth for intended behavior; the baseline is
-  pinned in `port/UPSTREAM_PORTED`. **Keep every `.ts` — never edit or delete it.** Port behavior
-  1:1, bug-for-bug; don't "fix" apparent upstream bugs in a port — match them and file an issue.
-  [AGENTS.md](./AGENTS.md) is the single source of truth for the full porting contract; this file
+- **The reference is a design guide, not a spec to copy.** For each module, the **co-located
+  sibling `.ts`** (same folder as the `.rs`, both in `crates/*/src/`) shows what feature to build
+  and how better-auth behaves; the baseline is pinned in `port/UPSTREAM_PORTED`. **Keep every `.ts`
+  — never edit or delete it.** Reimplement behavior idiomatically and securely on mature, audited
+  crates; don't copy upstream bugs or weaker choices — fix them and prefer modern best-in-class
+  defaults. [AGENTS.md](./AGENTS.md) is the single source of truth for the full contract; this file
   is the quick start.
 - **Toolchain is pinned** to Rust `1.96.0`, edition `2024` (`rust-toolchain.toml`).
 - **Branches** start with `claude/` or a short descriptive prefix.
@@ -35,8 +36,8 @@ docker compose up -d postgres redis
 
 Follow `.claude/skills/porting-ts-to-rust` and the per-file loop in `.claude/phases/README.md`:
 read the `.ts` → write the Rust sibling at its `rust_path` (from `port/manifest.tsv`) → make it
-compile → port the matching test → run it → update the manifest row. Add a differential vector for
-each externally observable behavior.
+compile → port the matching test → run it → update the manifest row. Cover each externally
+observable behavior with our own Rust behavior tests (`cargo nextest`).
 
 ## Pull requests
 

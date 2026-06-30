@@ -1,12 +1,13 @@
 ---
 name: db-adapter-conformance
-description: The executable spec a better-auth-rs DatabaseAdapter must satisfy, ported from better-auth's test-utils adapter suites. Use when implementing or testing a storage backend (sqlx-postgres, memory, future mysql/sqlite/mongo).
+description: The executable spec a better-auth-rs DatabaseAdapter must satisfy — our own conformance battery (informed by better-auth's test-utils adapter suites). Use when implementing or testing a storage backend (memory, sqlx/postgres, future mysql/sqlite/mongo).
 ---
 
 # DB adapter conformance
 
-Upstream `packages/test-utils/src/adapter` defines the behavioral contract every adapter must
-pass. Port it as a Rust trait-based conformance suite run against each backend.
+Upstream `packages/test-utils/src/adapter` is the reference for the behavioral contract every
+adapter must satisfy. We implement our own Rust trait-based conformance battery (in
+`better-auth-rs-test-utils`) and run it against each backend.
 
 ## Suites to port (each is a behavior the adapter must satisfy)
 
@@ -20,12 +21,14 @@ pass. Port it as a Rust trait-based conformance suite run against each backend.
 
 ## How to run
 
-`cargo nextest run -p better-auth-rs --features memory-adapter conformance` (no DB) and
-`... --features sqlx-postgres conformance` against the docker-compose Postgres service.
+Run the `better-auth-rs-test-utils` battery against each adapter crate: the in-memory adapter
+(`better-auth-rs-memory-adapter`, no DB) and the SQLx/Postgres adapter
+(`better-auth-rs-sqlx-adapter`) against the docker-compose Postgres service —
+`cargo nextest run -p <adapter-crate> conformance`.
 
 ## Notes
 
-- Drive the same scenarios in the differential harness so adapter behavior is also proven
-  vs the TS server.
+- One battery, every backend: each adapter shares the same executable spec, so they behave
+  consistently.
 - Migrations must produce exactly `[user, session, account, verification]` (+ plugin tables
   when their features are on).

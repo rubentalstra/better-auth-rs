@@ -1,4 +1,4 @@
-//! Upstream source: error/codes.ts
+//! Upstream reference: error/codes.ts
 //!
 //! `BASE_ERROR_CODES` — a flat UPPER_SNAKE → message map built via `defineErrorCodes` — becomes a
 //! closed enum: one variant per code, `code()` returns the UPPER_SNAKE key, `message()` the human

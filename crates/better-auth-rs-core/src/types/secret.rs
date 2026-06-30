@@ -1,4 +1,4 @@
-//! Upstream source: types/secret.ts
+//! Upstream reference: types/secret.ts
 //!
 //! `Map<number, string>` → [`BTreeMap<u32, String>`] (deterministic ordering; the lowest key is the
 //! first/earliest version). Core is driver-light (no `secrecy` dep), so secret material is held as

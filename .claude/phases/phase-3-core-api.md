@@ -3,17 +3,18 @@
 **Goal:** endpoint/router/hook pipeline + the core auth routes.
 **Preconditions:** Phase 2.
 
-## Scope (reference → target)
+## Scope (design reference → target)
 
 - `packages/better-auth/src/api/{dispatch,to-auth-endpoints,index,middlewares,rate-limiter,routes}`
-  + `packages/core/src/api` → `crates/better-auth-rs/src/api/*`.
+  + `packages/core/src/api` inform `crates/better-auth-rs/src/api/*`.
 
-## Reference reading
+## Design-reference reading
 
 `dispatch.ts` (before/after hook chain, middleware matching, response conversion),
 `to-auth-endpoints.ts`, route files (sign-up, sign-in, sign-out, session, password,
 email-verification, update-user, account, callback), `middlewares/{origin-check,authorization}`,
-`rate-limiter`.
+`rate-limiter`. Read these to understand the feature surface and behavior, then reimplement
+idiomatically and securely in Rust — do not copy them line-for-line.
 
 ## What to build
 
@@ -24,9 +25,9 @@ email-verification, update-user, account, callback), `middlewares/{origin-check,
 
 ## Gates
 
-Ported route tests; the full sign-up → sign-in → session flow works via direct dispatch
-against the `memory` adapter (no axum yet).
+Rust behavior tests for the routes; the full sign-up → sign-in → session flow works via
+direct dispatch against the `memory` adapter (no axum yet).
 
 ## Exit criteria
 
-Route tests green.
+Route tests green (cargo nextest), clippy `-D warnings`, fmt clean.

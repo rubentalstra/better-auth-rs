@@ -5,12 +5,15 @@ description: How to translate a better-auth TypeScript source file into idiomati
 
 # Porting better-auth TS → idiomatic async Rust
 
-The **co-located sibling `.ts`** (same folder as the `.rs` you're writing) is the **spec** —
-better-auth's source is vendored right next to where each `.rs` goes. Port behavior 1:1,
-bug-for-bug; keep control flow, ordering, names, and comments close to upstream so future
-upstream diffs re-port cleanly. Find the file's `rust_path` in `port/manifest.tsv`. **Keep the
-`.ts` permanently — never edit or delete it** (it is the 1:1 coverage map, the re-sync diff
-target, and the differential-harness fixture; see AGENTS.md rule 1).
+The **co-located sibling `.ts`** (same folder as the `.rs` you're writing) is the **design
+reference** — better-auth's source is vendored right next to where each `.rs` goes. Read it to
+understand the feature and how better-auth behaves, then **reimplement it idiomatically and securely
+in Rust**, built on mature crates (see the crates.io rule below). Match observable *feature
+behavior*, not byte formats or internals; do **not** copy upstream bugs or weaker security choices —
+do the secure, correct thing and note the deviation. Find the file's `rust_path` in
+`port/manifest.tsv`. **Keep the `.ts` permanently — never edit or delete it** (it is the coverage
+map of what's reimplemented, the re-sync reference, and the source of test cases worth porting; see
+AGENTS.md).
 
 ## Per-file loop
 

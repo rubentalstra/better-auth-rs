@@ -25,9 +25,11 @@ client-credentials-token,verify,oauth-provider,reject-redirects,utils}`, `state.
 
 ## Gates
 
-Ported oauth tests; differential OAuth flows with mocked provider endpoints (the e2e-smoke
-MSW analogue, mocked in Rust).
+Our own Rust oauth tests; HTTP behavior tests driving the full OAuth flows against mocked
+provider endpoints (authorization, token, userinfo) so flows are exercised end-to-end without
+a live IdP.
 
 ## Exit criteria
 
-Social sign-in matches the TS server for representative OIDC + non-OIDC providers.
+Social sign-in works correctly and securely for representative OIDC + non-OIDC providers,
+covered by passing Rust tests.

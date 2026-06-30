@@ -1,4 +1,4 @@
-//! Upstream source: types/cookie.ts
+//! Upstream reference: types/cookie.ts
 //!
 //! `CookieOptions` is `better-call`'s cookie type. Rather than hand-roll it, the fields are modeled
 //! on standard crates — `cookie::SameSite` for `sameSite`, `time` for `expires`/`maxAge`. `prefix`

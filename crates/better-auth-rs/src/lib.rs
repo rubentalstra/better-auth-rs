@@ -1,12 +1,11 @@
 //! # better-auth-rs
 //!
-//! A faithful 1:1 Rust port of better-auth (`packages/better-auth`). Upstream TypeScript is
-//! vendored read-only as co-located `.ts` siblings (the spec); modules are ported bottom-up,
-//! file-by-file — see `port/manifest.tsv` and `src/CLAUDE.md`.
+//! A security-first Rust reimplementation of better-auth (`packages/better-auth`) — inspired by
+//! better-auth, not a wire-compatible port. The better-auth TypeScript is co-located read-only as
+//! the design reference; modules are built bottom-up — see `port/manifest.tsv` and `src/CLAUDE.md`.
 //!
-//! Upstream source: `index.ts` — the public re-export surface is wired here as modules land. This
-//! crate depends on [`better_auth_rs_core`]; porting proceeds once core's surface exists. Port in
-//! progress: no modules are wired yet.
+//! Upstream reference: `index.ts` — the public re-export surface is wired here as modules land. This
+//! crate depends on [`better_auth_rs_core`]; work proceeds once core's surface exists.
 
 pub use better_auth_rs_core as core;
 

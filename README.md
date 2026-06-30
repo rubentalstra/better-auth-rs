@@ -6,9 +6,9 @@
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
 
 **better-auth-rs** is a comprehensive, framework-agnostic authentication and authorization
-library for Rust — a faithful, file-by-file port of
-[better-auth](https://github.com/better-auth/better-auth) (the TypeScript framework) to idiomatic
-async Rust.
+library for Rust. It reimplements the feature set and design of
+[better-auth](https://github.com/better-auth/better-auth) (the TypeScript framework) in idiomatic,
+security-first async Rust — **inspired by** better-auth, **not** a wire-compatible port of it.
 
 > **Status: early / under active porting.** The library is being built up subsystem-by-subsystem
 > (see `.claude/phases/`). It currently tracks better-auth **v1.6.23** (baseline pinned in
@@ -32,8 +32,9 @@ mature Rust crates.
 - **In-package plugins are opt-in features named exactly like their better-auth counterparts**
   (`two-factor`, `organization`, `admin`, `jwt`, `oidc-provider`, …). Separate-package plugins
   (`api-key`, `passkey`, `sso`, …) are their own `better-auth-rs-*` crates.
-- **Behavioral parity is proven**, not assumed: better-auth's test suite is ported to Rust and a
-  differential harness replays identical requests against the TypeScript server and the Rust server.
+- **Security-first and well-tested:** built on audited, industry-standard crates (`argon2`, `http`,
+  `cookie`, `sqlx`, RustCrypto, …) and covered by our own Rust test suite — modern best-in-class
+  defaults over byte-for-byte fidelity to the JS original.
 
 ## Install
 
@@ -47,11 +48,14 @@ better-auth-rs-sqlx-adapter = "0.1"   # PostgreSQL via SQLx
 `default = ["axum"]`. Add the in-package plugin features you need — each is named after the
 upstream better-auth plugin. Storage backends are separate adapter crates, not features.
 
-## Compatibility
+## Relationship to better-auth
 
-- Same database schema and HTTP API as better-auth (so the concepts and docs transfer directly).
-- Idiomatic Rust crypto/storage internally — this is not a drop-in binary replacement, but ported
-  behavior is validated against the original.
+- **Inspired by, not wire-compatible with** better-auth: a Rust client talks to a Rust server; it
+  does not interoperate byte-for-byte with the JS/TS better-auth. better-auth's design, data model,
+  and feature set are the blueprint.
+- **Security-first, idiomatic internals** built on mature crates, with modern best-in-class defaults
+  (e.g. argon2id password hashing) — chosen for security even where they differ from better-auth's
+  specific choices.
 
 ## Project layout
 

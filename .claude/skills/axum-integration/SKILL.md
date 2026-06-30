@@ -19,8 +19,9 @@ their own thin adapter later without touching the core.
 
 ## Example
 
-`examples/axum_server.rs` wires `sqlx-postgres` + email/password and serves on `127.0.0.1:0`
-(or an env port). It's the smoke target for the differential harness and manual `curl` checks.
+`examples/axum_server.rs` wires the `better-auth-rs-sqlx-adapter` + email/password and serves on
+`127.0.0.1:0` (or an env port). It's the smoke target for manual `curl` checks and our HTTP
+behavior tests.
 
 ## Rules
 

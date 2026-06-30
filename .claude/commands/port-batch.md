@@ -15,9 +15,10 @@ Steps:
 1. Read `port/manifest.tsv`; select up to N rows with `status=todo` matching the filter,
    smallest-LOC first (warm up), but keep a dependency-sane order within a subsystem.
 2. For each selected row, follow the per-file loop in `.claude/skills/porting-ts-to-rust`:
-   read the `.ts` spec → write the Rust sibling at `rust_path` → `cargo check -p <crate>` →
-   port the matching test → `cargo nextest run -p <crate> <filter>` → update the row
-   (`status`, `confidence`, `upstream_sha`).
+   read the `.ts` design reference → reimplement the feature idiomatically and securely in the
+   Rust sibling at `rust_path`, built on mature audited crates (never hand-roll security
+   primitives) → `cargo check -p <crate>` → write our own Rust behavior tests →
+   `cargo nextest run -p <crate> <filter>` → update the row (`status`, `confidence`, `upstream_sha`).
 3. Low-confidence ports: spawn an adversarial reviewer before marking `done`.
 4. Commit on the current `claude/phase-*` branch with a Conventional-Commit message
    summarizing the batch (e.g. `feat(db): port adapter where-clause builder`).

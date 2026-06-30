@@ -22,6 +22,11 @@ porting contract, and `.claude/skills/porting-ts-to-rust` for the TS→Rust chea
 - Everything optional is feature-gated by the **upstream plugin/package name**; keep the core
   compiling with `--no-default-features`.
 - Constant-time compares (`subtle`) for secrets/tokens; wrap secrets in `secrecy`; never log them.
+- **Cookies: use the `cookie` crate's `signed`/`private` jars** (its `secure` feature) for cookie
+  integrity and encryption — audited and industry-standard. We are not wire-compatible with
+  better-auth, so there is no reason to replicate its custom HMAC/HS256/JWE cookie format; prefer
+  the crate's vetted implementation. The `cookie` crate also handles parsing/serialization
+  (`percent-encode`). (better-auth's own strategies are a design reference, not a target.)
 
 ## Tests
 
