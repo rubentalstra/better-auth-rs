@@ -60,26 +60,5 @@ pub fn sha256(data: impl AsRef<[u8]>) -> [u8; 32] {
 }
 
 #[cfg(test)]
-#[allow(clippy::unwrap_used)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn sha256_known_vector() {
-        // FIPS 180-2 "abc"
-        assert_eq!(
-            crate::hex::encode(sha256("abc")),
-            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
-        );
-    }
-
-    #[test]
-    fn digest_encoded_matches() {
-        assert_eq!(
-            digest_encoded(ShaFamily::Sha256, "abc", Encoding::Hex),
-            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
-        );
-        assert_eq!(digest(ShaFamily::Sha512, "abc").len(), 64);
-        assert_eq!(digest(ShaFamily::Sha384, "abc").len(), 48);
-    }
-}
+#[path = "hash.test.rs"]
+mod hash_tests;

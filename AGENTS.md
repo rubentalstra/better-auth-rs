@@ -51,9 +51,12 @@ to `docs/` (Fumadocs site) and the vendored TS reference server the differential
    error paths), every edge case. Do **not** ship a subset and call it ported; do **not** leave
    methods "deferred". If you genuinely cannot complete a file 100% right now, **do not start it** —
    pick a smaller file you can finish. A file is "done" only when its `.rs` covers the entire `.ts`.
-   **AND: if the `.ts` has a sibling `*.test.ts`, you MUST port it to a Rust test in the same change**
-   (e.g. `foo.test.ts` → `#[cfg(test)] mod tests` in `foo.rs`, or a dedicated test module) — every
-   upstream test case gets a Rust equivalent. 1:1 means 1:1 for code *and* tests.
+   **AND: if the `.ts` has a sibling `*.test.ts`, you MUST port it to a Rust test in the same
+   change** — into a **co-located `<stem>.test.rs` file** mirroring `<stem>.test.ts` 1:1 (NOT an
+   inline `mod tests`), wired from the source with
+   `#[cfg(test)] #[path = "<stem>.test.rs"] mod <stem>_tests;`. The `.test.rs` is a child module
+   (so it can exercise private items) and uses `#![allow(clippy::unwrap_used, clippy::expect_used)]`.
+   Every upstream test case gets a Rust equivalent. 1:1 means 1:1 for code *and* tests, file-for-file.
 1. **The reference is the spec.** For any behavior, open the co-located sibling `.ts` (same
    folder as the `.rs`), understand it, then make the Rust match — **bug-for-bug**. Don't
    "fix" apparent upstream bugs during a port; file them, match the behavior. **Keep the `.ts`

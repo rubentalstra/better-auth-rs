@@ -101,48 +101,5 @@ impl RandomStringGenerator {
 }
 
 #[cfg(test)]
-#[allow(clippy::unwrap_used)]
-mod tests {
-    use super::*;
-
-    fn make() -> RandomStringGenerator {
-        // better-auth's default alphabet: a-z 0-9 A-Z - _
-        create_random_string_generator(&[
-            Alphabet::LowerAlpha,
-            Alphabet::Digits,
-            Alphabet::UpperAlpha,
-            Alphabet::Symbols,
-        ])
-    }
-
-    #[test]
-    fn respects_length() {
-        let g = make();
-        for len in [1usize, 16, 32, 100] {
-            assert_eq!(g.generate(len).len(), len);
-        }
-    }
-
-    #[test]
-    fn stays_within_charset() {
-        let g = make();
-        let allowed: std::collections::HashSet<char> =
-            "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ-_"
-                .chars()
-                .collect();
-        assert!(g.generate(512).chars().all(|c| allowed.contains(&c)));
-    }
-
-    #[test]
-    fn sub_alphabet_override() {
-        let g = make();
-        let digits = g.generate_with(64, &[Alphabet::Digits]);
-        assert!(digits.chars().all(|c| c.is_ascii_digit()));
-    }
-
-    #[test]
-    fn successive_calls_differ() {
-        let g = make();
-        assert_ne!(g.generate(32), g.generate(32));
-    }
-}
+#[path = "random.test.rs"]
+mod random_tests;

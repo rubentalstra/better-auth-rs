@@ -49,27 +49,5 @@ pub enum HexError {
 }
 
 #[cfg(test)]
-#[allow(clippy::unwrap_used)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn encodes_lowercase() {
-        assert_eq!(encode([0xde, 0xad, 0xbe, 0xef]), "deadbeef");
-        assert_eq!(encode(b"abc"), "616263");
-        assert_eq!(encode([]), "");
-    }
-
-    #[test]
-    fn round_trips() {
-        let bytes = [0u8, 1, 2, 250, 255];
-        assert_eq!(decode(&encode(bytes)).unwrap(), bytes);
-    }
-
-    #[test]
-    fn rejects_malformed() {
-        assert!(decode("abc").is_err()); // odd length
-        assert!(decode("zz").is_err()); // non-hex
-        assert!(decode("DEAD").is_err()); // uppercase rejected (matches upstream)
-    }
-}
+#[path = "hex.test.rs"]
+mod hex_tests;

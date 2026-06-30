@@ -106,45 +106,5 @@ pub enum Base64Error {
 }
 
 #[cfg(test)]
-#[allow(clippy::unwrap_used)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn standard_known_vectors() {
-        assert_eq!(base64::encode("", true), "");
-        assert_eq!(base64::encode("f", true), "Zg==");
-        assert_eq!(base64::encode("fo", true), "Zm8=");
-        assert_eq!(base64::encode("foo", true), "Zm9v");
-        assert_eq!(base64::encode("foobar", true), "Zm9vYmFy");
-        assert_eq!(base64::encode("foo", false), "Zm9v");
-        assert_eq!(base64::encode("fo", false), "Zm8");
-    }
-
-    #[test]
-    fn url_safe_uses_dash_underscore() {
-        // 0xfb 0xff -> standard "+/8=", url-safe "-_8="
-        assert_eq!(base64::encode([0xfb, 0xff], true), "+/8=");
-        assert_eq!(base64_url::encode([0xfb, 0xff], true), "-_8=");
-        assert_eq!(base64_url::encode([0xfb, 0xff], false), "-_8");
-    }
-
-    #[test]
-    fn round_trips_and_autodetects() {
-        let bytes = [0u8, 1, 2, 0xfb, 0xff, 42];
-        assert_eq!(base64::decode(&base64::encode(bytes, true)).unwrap(), bytes);
-        // decode auto-detects url-safe alphabet from '-'/'_'
-        assert_eq!(
-            base64::decode(&base64_url::encode(bytes, false)).unwrap(),
-            bytes
-        );
-    }
-
-    #[test]
-    fn rejects_invalid_char() {
-        assert!(matches!(
-            base64::decode("Zm9v*"),
-            Err(Base64Error::InvalidCharacter('*'))
-        ));
-    }
-}
+#[path = "base64.test.rs"]
+mod base64_tests;
