@@ -2,7 +2,9 @@
 //! a later batch — its manifest row stays `todo` until then. For now this wires the leaf type
 //! modules ported so far.
 
+pub mod context;
 pub mod cookie;
 pub mod helper;
 pub mod init_options;
+pub mod plugin;
 pub mod secret;
