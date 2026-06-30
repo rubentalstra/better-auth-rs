@@ -415,6 +415,56 @@ pub trait CustomAdapter: Send + Sync {
     }
 }
 
+/// The CRUD surface shared by the high-level adapter and a transaction handle (upstream
+/// `DBTransactionAdapter = Omit<DBAdapter, "transaction">`). Mirrors [`CustomAdapter`]'s methods;
+/// the difference is that the factory applies transforms / id-generation between the two.
+#[async_trait]
+pub trait TransactionAdapter: Send + Sync {
+    /// Insert a record and return it.
+    async fn create(&self, args: CreateArgs) -> AdapterResult<Row>;
+    /// Find a single matching row.
+    async fn find_one(&self, args: FindOneArgs) -> AdapterResult<Option<Row>>;
+    /// Find all matching rows.
+    async fn find_many(&self, args: FindManyArgs) -> AdapterResult<Vec<Row>>;
+    /// Count matching rows.
+    async fn count(&self, args: CountArgs) -> AdapterResult<u64>;
+    /// Update a single matching row; returns it, or `None`.
+    async fn update(&self, args: UpdateArgs) -> AdapterResult<Option<Row>>;
+    /// Update all matching rows; returns the count affected.
+    async fn update_many(&self, args: UpdateManyArgs) -> AdapterResult<u64>;
+    /// Delete all matching rows.
+    async fn delete(&self, args: DeleteArgs) -> AdapterResult<()>;
+    /// Delete all matching rows; returns the count affected.
+    async fn delete_many(&self, args: DeleteArgs) -> AdapterResult<u64>;
+    /// Atomically consume (delete-and-return) a single matching row.
+    async fn consume_one(&self, args: ConsumeOneArgs) -> AdapterResult<Option<Row>>;
+    /// Atomically apply numeric deltas (+ optional `set`) to a single guarded row.
+    async fn increment_one(&self, args: IncrementOneArgs) -> AdapterResult<Option<Row>>;
+}
+
+/// The high-level adapter the auth layer uses (`DBAdapter`) — produced by the factory wrapping a
+/// [`CustomAdapter`] with transforms, id generation, and transactions. Its CRUD comes from
+/// [`TransactionAdapter`]. (Joins via `JoinOption` and `forceAllowId` on `create` are deferred to
+/// the factory; the high-level methods currently share the [`CustomAdapter`] arg shapes.)
+#[async_trait]
+pub trait DatabaseAdapter: TransactionAdapter {
+    /// The adapter id (e.g. `"memory"`, `"sqlx-postgres"`).
+    fn id(&self) -> &str;
+    /// Begin a transaction, returning a handle. Non-transactional backends return a handle that
+    /// runs operations sequentially with no-op commit/rollback (the upstream `transaction: false`
+    /// fallback).
+    async fn begin_transaction(&self) -> AdapterResult<Box<dyn DatabaseTransaction>>;
+}
+
+/// A transaction handle (`DBTransactionAdapter`): the CRUD surface plus commit/rollback.
+#[async_trait]
+pub trait DatabaseTransaction: TransactionAdapter {
+    /// Commit the transaction.
+    async fn commit(self: Box<Self>) -> AdapterResult<()>;
+    /// Roll the transaction back.
+    async fn rollback(self: Box<Self>) -> AdapterResult<()>;
+}
+
 #[cfg(test)]
 #[path = "mod.test.rs"]
 mod adapter_tests;

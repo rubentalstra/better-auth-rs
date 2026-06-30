@@ -212,3 +212,14 @@ async fn default_increment_one_applies_delta_and_set() {
         .unwrap();
     assert!(none.is_none());
 }
+
+// Compile-time assertion that the high-level adapter traits are object-safe (usable as `dyn`).
+#[test]
+fn adapter_traits_are_object_safe() {
+    fn _accepts(
+        _adapter: &dyn DatabaseAdapter,
+        _custom: &dyn CustomAdapter,
+        _tx: Box<dyn DatabaseTransaction>,
+    ) {
+    }
+}

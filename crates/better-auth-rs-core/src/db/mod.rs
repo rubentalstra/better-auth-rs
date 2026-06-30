@@ -8,10 +8,10 @@ pub mod schema;
 pub mod types;
 
 pub use adapter::{
-    AdapterError, AdapterResult, Connector, CountArgs, CreateArgs, CustomAdapter,
-    DbAdapterSchemaCreation, DeleteArgs, FindManyArgs, FindOneArgs, IncrementOneArgs, JoinConfig,
-    JoinConfigEntry, JoinOn, MatchMode, RelationType, Row, SortBy, SortDirection, UpdateArgs,
-    UpdateManyArgs, Where, WhereOperator,
+    AdapterError, AdapterResult, Connector, CountArgs, CreateArgs, CustomAdapter, DatabaseAdapter,
+    DatabaseTransaction, DbAdapterSchemaCreation, DeleteArgs, FindManyArgs, FindOneArgs,
+    IncrementOneArgs, JoinConfig, JoinConfigEntry, JoinOn, MatchMode, RelationType, Row, SortBy,
+    SortDirection, TransactionAdapter, UpdateArgs, UpdateManyArgs, Where, WhereOperator,
 };
 pub use plugin::{BetterAuthPluginDbSchema, PluginTableSchema};
 pub use schema::{Account, CoreFields, RateLimit, Session, User, Verification};
