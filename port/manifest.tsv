@@ -368,8 +368,8 @@ crates/better-auth-rs-core/src/db/schema/verification.ts	28	crates/better-auth-r
 crates/better-auth-rs-core/src/db/type.ts	360	crates/better-auth-rs-core/src/db/types.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/env/color-depth.ts	172	crates/better-auth-rs-core/src/env/color_depth.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/env/env-impl.ts	123	crates/better-auth-rs-core/src/env/env_impl.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/env/index.ts	23	crates/better-auth-rs-core/src/env/mod.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/env/logger.ts	145	crates/better-auth-rs-core/src/env/logger.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/env/index.ts	23	crates/better-auth-rs-core/src/env/mod.rs	building	med	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/env/logger.ts	145	crates/better-auth-rs-core/src/env/logger.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/error/codes.ts	72	crates/better-auth-rs-core/src/error/codes.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/error/index.ts	44	crates/better-auth-rs-core/src/error/mod.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/index.ts	1	crates/better-auth-rs-core/src/lib.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
@@ -426,7 +426,7 @@ crates/better-auth-rs-core/src/social_providers/wechat.ts	220	crates/better-auth
 crates/better-auth-rs-core/src/social_providers/zoom.ts	230	crates/better-auth-rs-core/src/social_providers/zoom.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/types/context.ts	460	crates/better-auth-rs-core/src/types/context.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/types/cookie.ts	10	crates/better-auth-rs-core/src/types/cookie.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/types/helper.ts	27	crates/better-auth-rs-core/src/types/helper.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/types/helper.ts	27	crates/better-auth-rs-core/src/types/helper.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/types/index.ts	40	crates/better-auth-rs-core/src/types/mod.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/types/init-options.ts	1679	crates/better-auth-rs-core/src/types/init_options.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/types/plugin-client.ts	143	crates/better-auth-rs-core/src/types/plugin_client.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
@@ -438,7 +438,7 @@ crates/better-auth-rs-core/src/utils/deprecate.ts	21	crates/better-auth-rs-core/
 crates/better-auth-rs-core/src/utils/error-codes.ts	68	crates/better-auth-rs-core/src/utils/error_codes.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/utils/fetch-metadata.ts	3	crates/better-auth-rs-core/src/utils/fetch_metadata.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/utils/host.ts	416	crates/better-auth-rs-core/src/utils/host.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/utils/id.ts	5	crates/better-auth-rs-core/src/utils/id.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/utils/id.ts	5	crates/better-auth-rs-core/src/utils/id.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/utils/ip.ts	395	crates/better-auth-rs-core/src/utils/ip.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/utils/is-api-error.ts	10	crates/better-auth-rs-core/src/utils/is_api_error.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/utils/json.ts	56	crates/better-auth-rs-core/src/utils/json.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba

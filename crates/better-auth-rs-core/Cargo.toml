@@ -14,6 +14,7 @@ exclude = ["**/*.ts"]
 workspace = true
 
 [dependencies]
+better-auth-rs-utils = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 time = { workspace = true }
