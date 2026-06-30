@@ -9,10 +9,11 @@
 //! social-provider registry, error codes, and the plugin/context type system.
 //!
 //! Modules are filled in during **Phase 1+** of the port (see `.claude/phases/`).
-//! The upstream TypeScript source lives read-only under `reference/better-auth/`
-//! and is the source of truth for intended behavior.
+//! The upstream TypeScript source is vendored read-only as co-located `.ts` siblings and is the
+//! source of truth for intended behavior.
 
 pub mod db;
+pub mod secret;
 
 /// The better-auth upstream version this port currently tracks.
 pub const UPSTREAM_VERSION: &str = "1.6.22";

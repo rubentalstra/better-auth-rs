@@ -32,8 +32,10 @@ fn unix_now() -> i64 {
 /// Sign `payload` (a JSON object) as an HS256 JWT, setting `iat` now and `exp` at `now + expires_in`
 /// seconds. Mirrors upstream `signJWT` (default `expires_in` upstream is 3600).
 pub fn sign_jwt(payload: &Value, secret: &str, expires_in: i64) -> Result<String, JwtError> {
-    let mut claims: Map<String, Value> =
-        payload.as_object().cloned().ok_or(JwtError::PayloadNotObject)?;
+    let mut claims: Map<String, Value> = payload
+        .as_object()
+        .cloned()
+        .ok_or(JwtError::PayloadNotObject)?;
     let now = unix_now();
     claims.insert("iat".to_string(), json!(now));
     claims.insert("exp".to_string(), json!(now + expires_in));

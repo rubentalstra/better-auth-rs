@@ -27,6 +27,7 @@ time = { workspace = true }
 url = { workspace = true }
 garde = { workspace = true }
 tracing = { workspace = true }
+thiserror = { workspace = true }
 
 # crypto (always-on): the better-auth `crypto/` layer — XChaCha20-Poly1305 AEAD, HMAC signing,
 # HKDF key derivation, HS256 JWT, constant-time compare. (scrypt/random/hash/encodings live in

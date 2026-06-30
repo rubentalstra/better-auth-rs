@@ -25,7 +25,7 @@ use better_auth_rs_utils::base64::base64;
 use better_auth_rs_utils::hash::sha256;
 use better_auth_rs_utils::hex;
 use chacha20poly1305::aead::{Aead, KeyInit};
-use chacha20poly1305::{Key, XChaCha20Poly1305, XNonce};
+use chacha20poly1305::{XChaCha20Poly1305, XNonce};
 use hmac::{Hmac, Mac};
 use sha2::Sha256;
 
@@ -90,21 +90,24 @@ pub fn format_envelope(version: u32, ciphertext: &str) -> String {
     format!("{ENVELOPE_PREFIX}{version}${ciphertext}")
 }
 
+#[allow(clippy::expect_used)]
 fn cipher_for(secret: &str) -> XChaCha20Poly1305 {
     let key = sha256(secret);
-    XChaCha20Poly1305::new(Key::from_slice(&key))
+    // SHA-256 always yields the exact 32-byte key size, so this cannot fail.
+    XChaCha20Poly1305::new_from_slice(&key).expect("SHA-256 digest is a valid 32-byte key")
 }
 
 fn raw_encrypt(secret: &str, data: &str) -> Result<String, CryptoError> {
     let cipher = cipher_for(secret);
-    let mut nonce = [0u8; XNONCE_LEN];
-    getrandom::fill(&mut nonce).map_err(|_| CryptoError::Random)?;
+    let mut nonce_bytes = [0u8; XNONCE_LEN];
+    getrandom::fill(&mut nonce_bytes).map_err(|_| CryptoError::Random)?;
+    let nonce: XNonce = nonce_bytes.into();
     let ciphertext = cipher
-        .encrypt(XNonce::from_slice(&nonce), data.as_bytes())
+        .encrypt(&nonce, data.as_bytes())
         .map_err(|_| CryptoError::Encrypt)?;
     // Managed-nonce layout: nonce || ciphertext || tag, hex-encoded.
     let mut out = Vec::with_capacity(XNONCE_LEN + ciphertext.len());
-    out.extend_from_slice(&nonce);
+    out.extend_from_slice(&nonce_bytes);
     out.extend_from_slice(&ciphertext);
     Ok(hex::encode(out))
 }
@@ -115,8 +118,9 @@ fn raw_decrypt(secret: &str, ciphertext_hex: &str) -> Result<String, CryptoError
         return Err(CryptoError::Decrypt);
     }
     let (nonce, ciphertext) = bytes.split_at(XNONCE_LEN);
+    let nonce = XNonce::try_from(nonce).map_err(|_| CryptoError::Decrypt)?;
     let plaintext = cipher_for(secret)
-        .decrypt(XNonce::from_slice(nonce), ciphertext)
+        .decrypt(&nonce, ciphertext)
         .map_err(|_| CryptoError::Decrypt)?;
     String::from_utf8(plaintext).map_err(|_| CryptoError::InvalidUtf8)
 }
@@ -163,7 +167,8 @@ pub fn symmetric_decrypt(key: &SecretSource, data: &str) -> Result<String, Crypt
 #[allow(clippy::expect_used)]
 pub fn make_signature(value: &str, secret: &str) -> String {
     // HMAC accepts a key of any length, so `new_from_slice` cannot fail here.
-    let mut mac = HmacSha256::new_from_slice(secret.as_bytes()).expect("HMAC accepts any key length");
+    let mut mac =
+        HmacSha256::new_from_slice(secret.as_bytes()).expect("HMAC accepts any key length");
     mac.update(value.as_bytes());
     base64::encode(mac.finalize().into_bytes(), true)
 }
@@ -265,6 +270,9 @@ mod tests {
         assert_eq!(sig, make_signature("session-token-value", "signing-secret"));
         assert_eq!(sig.len(), 44);
         assert!(sig.ends_with('='));
-        assert_ne!(sig, make_signature("session-token-value", "different-secret"));
+        assert_ne!(
+            sig,
+            make_signature("session-token-value", "different-secret")
+        );
     }
 }

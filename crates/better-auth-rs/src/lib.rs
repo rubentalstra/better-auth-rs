@@ -28,6 +28,8 @@
 //! [`better-auth-rs-sqlx-adapter`]: https://docs.rs/better-auth-rs-sqlx-adapter
 //! [`better-auth-rs-memory-adapter`]: https://docs.rs/better-auth-rs-memory-adapter
 
+pub mod crypto;
+
 pub use better_auth_rs_core as core;
 
 /// The better-auth upstream version this port currently tracks.

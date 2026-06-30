@@ -80,7 +80,9 @@ hkdf = "0.13.0"
 unicode-normalization = "0.1.25"
 
 # jwt / oauth
-jsonwebtoken = "10.4.0"
+# jsonwebtoken 10 requires choosing a crypto provider; `rust_crypto` keeps us pure-Rust (no
+# aws-lc-rs / C toolchain). `default-features = false` drops PEM key support we don't use (HS256).
+jsonwebtoken = { version = "10.4.0", default-features = false, features = ["rust_crypto"] }
 jose-jwk = "0.1.2"
 # JWE A256CBC-HS512 (optional, behind the `jwe` feature). `vendored` builds OpenSSL from
 # source so no system OpenSSL is required.
