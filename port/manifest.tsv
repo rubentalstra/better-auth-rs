@@ -428,7 +428,7 @@ crates/better-auth-rs-core/src/types/context.ts	460	crates/better-auth-rs-core/s
 crates/better-auth-rs-core/src/types/cookie.ts	10	crates/better-auth-rs-core/src/types/cookie.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/types/helper.ts	27	crates/better-auth-rs-core/src/types/helper.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/types/index.ts	40	crates/better-auth-rs-core/src/types/mod.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/types/init-options.ts	1679	crates/better-auth-rs-core/src/types/init_options.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/types/init-options.ts	1679	crates/better-auth-rs-core/src/types/init_options.rs	building	low	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/types/plugin-client.ts	143	crates/better-auth-rs-core/src/types/plugin_client.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/types/plugin.ts	163	crates/better-auth-rs-core/src/types/plugin.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/types/secret.ts	8	crates/better-auth-rs-core/src/types/secret.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba

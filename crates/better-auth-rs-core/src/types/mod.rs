@@ -4,4 +4,5 @@
 
 pub mod cookie;
 pub mod helper;
+pub mod init_options;
 pub mod secret;
