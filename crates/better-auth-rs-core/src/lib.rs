@@ -8,6 +8,7 @@
 //! Upstream reference: `index.ts` (`export * from "./types"`) — the public re-export surface is wired
 //! here as modules land. Port in progress.
 
+pub mod db;
 pub mod error;
 pub mod types;
 
