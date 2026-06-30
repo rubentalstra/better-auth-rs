@@ -6,7 +6,10 @@
 //! file-by-file — see `port/manifest.tsv` and this crate's `src/CLAUDE.md`.
 //!
 //! Upstream source: `index.ts` (`export * from "./types"`) — the public re-export surface is wired
-//! here as modules land. Port in progress: no modules are wired yet.
+//! here as modules land. Port in progress.
+
+pub mod error;
+pub mod types;
 
 /// The better-auth upstream version this port currently tracks (pinned in `port/UPSTREAM_PORTED`).
 pub const UPSTREAM_VERSION: &str = "1.6.23";
