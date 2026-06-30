@@ -129,6 +129,8 @@ name = "better-auth-rs-core"
 version = "0.0.0"
 dependencies = [
  "async-trait",
+ "cookie",
+ "http",
  "serde",
  "serde_json",
  "thiserror",
@@ -1053,6 +1055,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6303bc9732ae41b04cb554b844a762b4115a61bfaa81e3e83050991eeb56863f"
 dependencies = [
  "digest 0.11.3",
+]
+
+[[package]]
+name = "http"
+version = "1.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6970f50e31d6fc17d3fa27329444bfa74e196cf62e95052a3f6fee181dba6425"
+dependencies = [
+ "bytes",
+ "itoa",
 ]
 
 [[package]]

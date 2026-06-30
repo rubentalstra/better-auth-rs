@@ -1,26 +1,14 @@
 //! Upstream source: types/cookie.ts
 //!
-//! `CookieOptions` is from `better-call` (modeled locally — core is driver-light, no `cookie`
-//! crate dep). The string-literal unions for `sameSite`/`prefix` become closed enums; `sameSite`'s
-//! upstream union accepts either case (`"Strict"`/`"strict"` …) but the value is the same, so the
-//! enum carries the value only. `expires?: Date` → `Option<time::OffsetDateTime>`; `maxAge` is in
-//! seconds.
+//! `CookieOptions` is `better-call`'s cookie type. Rather than hand-roll it, the fields are modeled
+//! on standard crates — `cookie::SameSite` for `sameSite`, `time` for `expires`/`maxAge`. `prefix`
+//! has no `cookie`-crate analog (it is better-call's `__Host-`/`__Secure-` naming convention), so it
+//! stays a small local enum.
 
-use time::OffsetDateTime;
+use cookie::SameSite;
+use time::{Duration, OffsetDateTime};
 
-/// The `SameSite` cookie attribute. Upstream accepts both `"Strict"`/`"strict"` (etc.); the value
-/// is case-insensitive so only the three semantic options are modeled.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SameSite {
-    /// `Strict`
-    Strict,
-    /// `Lax`
-    Lax,
-    /// `None`
-    None,
-}
-
-/// The cookie name prefix (`__Host-` / `__Secure-`).
+/// The cookie name prefix (`__Host-` / `__Secure-`). better-call-specific; no `cookie`-crate analog.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CookiePrefix {
     /// `__Host-` prefix.
@@ -29,7 +17,8 @@ pub enum CookiePrefix {
     Secure,
 }
 
-/// Cookie serialization options (port of `better-call`'s `CookieOptions`).
+/// Cookie serialization options (port of `better-call`'s `CookieOptions`), modeled on the `cookie`
+/// and `time` crates.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct CookieOptions {
     /// `domain`
@@ -38,13 +27,13 @@ pub struct CookieOptions {
     pub expires: Option<OffsetDateTime>,
     /// `httpOnly`
     pub http_only: Option<bool>,
-    /// `maxAge`, in seconds.
-    pub max_age: Option<i64>,
+    /// `maxAge` (upstream: a number of seconds).
+    pub max_age: Option<Duration>,
     /// `path`
     pub path: Option<String>,
     /// `secure`
     pub secure: Option<bool>,
-    /// `sameSite`
+    /// `sameSite` (`cookie::SameSite`; upstream's union accepts either case, same value).
     pub same_site: Option<SameSite>,
     /// `partitioned`
     pub partitioned: Option<bool>,

@@ -371,7 +371,7 @@ crates/better-auth-rs-core/src/env/env-impl.ts	123	crates/better-auth-rs-core/sr
 crates/better-auth-rs-core/src/env/index.ts	23	crates/better-auth-rs-core/src/env/mod.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/env/logger.ts	145	crates/better-auth-rs-core/src/env/logger.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/error/codes.ts	72	crates/better-auth-rs-core/src/error/codes.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/error/index.ts	44	crates/better-auth-rs-core/src/error/mod.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/error/index.ts	44	crates/better-auth-rs-core/src/error/mod.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/index.ts	1	crates/better-auth-rs-core/src/lib.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/instrumentation/api.ts	17	crates/better-auth-rs-core/src/instrumentation/api.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/instrumentation/attributes.ts	22	crates/better-auth-rs-core/src/instrumentation/attributes.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
@@ -435,7 +435,7 @@ crates/better-auth-rs-core/src/types/secret.ts	8	crates/better-auth-rs-core/src/
 crates/better-auth-rs-core/src/utils/async.ts	53	crates/better-auth-rs-core/src/utils/async.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/utils/db.ts	20	crates/better-auth-rs-core/src/utils/db.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/utils/deprecate.ts	21	crates/better-auth-rs-core/src/utils/deprecate.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/utils/error-codes.ts	68	crates/better-auth-rs-core/src/utils/error_codes.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/utils/error-codes.ts	68	crates/better-auth-rs-core/src/utils/error_codes.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/utils/fetch-metadata.ts	3	crates/better-auth-rs-core/src/utils/fetch_metadata.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/utils/host.ts	416	crates/better-auth-rs-core/src/utils/host.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/utils/id.ts	5	crates/better-auth-rs-core/src/utils/id.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba

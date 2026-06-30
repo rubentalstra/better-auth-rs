@@ -19,3 +19,7 @@ serde_json = { workspace = true }
 time = { workspace = true }
 thiserror = { workspace = true }
 async-trait = { workspace = true }
+# Neutral, framework-agnostic type crates (not web frameworks / DB drivers): the standard HTTP and
+# cookie vocabulary, modeled on rather than hand-rolled. See src/CLAUDE.md.
+http = { workspace = true }
+cookie = { workspace = true }

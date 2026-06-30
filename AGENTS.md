@@ -101,6 +101,15 @@ to `docs/` (Fumadocs site) and the vendored TS reference server the differential
   `unwrap`/`expect` are clippy-`warn` here — only on provable invariants, with a `// SAFETY:`-style note.
 - **Style:** match the neighboring file; reuse existing helpers before writing new ones; delete
   dead code in the same change; comments carry durable, non-obvious intent only.
+- **Check crates.io first — don't reinvent the wheel.** Before hand-rolling a type or utility,
+  search crates.io for a mature, widely-used crate (high downloads, actively maintained, the
+  ecosystem standard) and prefer it. Standard primitives have canonical crates: `http`
+  (`StatusCode`, `HeaderMap`, `Method`, `Uri`), `cookie` (`SameSite`, `Cookie`), `url`, `time`
+  (dates/durations), `serde`/`serde_json`, the RustCrypto stack. Model external TS types (e.g.
+  `better-call`'s `APIError`, `CookieOptions`) **on** these crates rather than re-implementing
+  them. Even the driver-light core uses them freely — they are neutral type crates, not web
+  frameworks or DB drivers. Hand-roll only when no suitable crate exists (and say why in the
+  module doc).
 
 ## Rules
 

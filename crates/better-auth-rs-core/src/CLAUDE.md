@@ -20,11 +20,14 @@ specific to *this* crate — it does not restate the contract.
 
 ## Idioms
 
-- **Driver-light — this is the hard rule for core.** No web framework, no DB driver. Deps are
-  only `serde, serde_json, time, thiserror, async-trait` (workspace-pinned). `http`/`cookie`/
-  `url`/`secrecy` belong to the main crate; model `better-call` types (`APIError`,
-  `CookieOptions`) as **local plain structs** here. Don't add a dep without it being genuinely
-  required by the file you're porting.
+- **Framework-neutral, but don't reinvent the wheel.** Core pulls in **no web *framework***
+  (axum/tower) and **no DB *driver*** (sqlx) — but it freely uses mature, neutral standard crates
+  and prefers them over hand-rolled types: `serde`, `serde_json`, `time`, `http` (`StatusCode`,
+  `HeaderMap`, `Method`, `Uri`), `cookie` (`SameSite`, `Cookie`), `url`, `thiserror`,
+  `async-trait`. Model `better-call`'s types **on these crates**, not by hand: `APIError` on
+  `http::StatusCode` + `http::HeaderMap` (better-call's status-name and numeric `statusCode`
+  collapse into one `StatusCode`); `CookieOptions` reuses `cookie::SameSite`. Secrets stay plain
+  `String` with a redacting `Debug` (no `secrecy` dep).
 - **TS type-level inference collapses to nothing at runtime.** `InferDBFields*`, `Prettify`,
   `UnionToIntersection`, `LiteralString`, `ValidateErrorCodes`, and `declare module …`
   plugin-registry augmentations have **no Rust analog**. Port the runtime value/struct/trait

@@ -36,6 +36,12 @@ read `.ts` → write the Rust sibling → `cargo check -p <crate>` → port the 
 
 ## Rules
 
+- **Check crates.io first; don't reinvent the wheel.** When a TS construct maps to a standard
+  primitive — HTTP types, cookies, URLs, dates/durations, encodings, crypto, JSON — reach for the
+  mature ecosystem crate (`http`, `cookie`, `url`, `time`, RustCrypto, `serde_json`, …) instead of
+  hand-rolling. Search crates.io and prefer the widely-used, maintained standard. Model external
+  types (e.g. `better-call`'s `APIError` → `http::StatusCode`/`HeaderMap`; `CookieOptions` →
+  `cookie::SameSite`) on those crates. Hand-roll only when nothing suitable exists; note why.
 - No `unwrap`/`expect` on fallible IO/user input (clippy-`warn` here); use `?` + typed errors.
 - Constant-time compare (`subtle`) for tokens/MACs; wrap secrets in `secrecy`.
 - Crypto/storage may be idiomatic Rust (we're schema/API-compatible, not byte-identical) —

@@ -11,6 +11,8 @@
 pub mod error;
 pub mod types;
 
+pub(crate) mod utils;
+
 /// The better-auth upstream version this port currently tracks (pinned in `port/UPSTREAM_PORTED`).
 pub const UPSTREAM_VERSION: &str = "1.6.23";
 
