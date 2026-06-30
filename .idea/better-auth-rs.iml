@@ -6,6 +6,19 @@
       <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs/examples" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/xtask/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-api-key/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-cli/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-memory-adapter/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-oauth-provider/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-passkey/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-redis-storage/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-scim/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-sqlx-adapter/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-sso/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-stripe/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-telemetry/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-test-utils/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/crates/better-auth-rs-utils/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

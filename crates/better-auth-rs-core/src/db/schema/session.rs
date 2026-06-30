@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
 
-use crate::db::field::{DbFieldType, DefaultValue, FieldAttribute};
+use crate::db::types::{DbFieldType, DefaultValue, FieldAttribute};
 
 /// Base session record (port of `BaseSession`).
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

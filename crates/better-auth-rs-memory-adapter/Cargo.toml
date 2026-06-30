@@ -1,0 +1,22 @@
+[package]
+name = "better-auth-rs-memory-adapter"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "In-memory DatabaseAdapter for better-auth-rs (port of @better-auth/memory-adapter) — for tests and development."
+exclude = ["**/*.ts"]
+
+[lints]
+workspace = true
+
+[dependencies]
+better-auth-rs-core = { workspace = true }
+async-trait = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+better-auth-rs-test-utils = { workspace = true }
+tokio = { workspace = true }
