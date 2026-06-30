@@ -20,6 +20,18 @@ use async_trait::async_trait;
 
 use super::types::{BetterAuthDbSchema, DbValue};
 
+pub mod get_default_field_name;
+pub mod get_default_model_name;
+pub mod get_field_name;
+pub mod get_model_name;
+pub mod utils;
+
+pub use get_default_field_name::get_default_field_name;
+pub use get_default_model_name::get_default_model_name;
+pub use get_field_name::get_field_name;
+pub use get_model_name::get_model_name;
+pub use utils::{ApplyAction, deepmerge, with_apply_default};
+
 /// A dynamic database record: field name → value.
 pub type Row = BTreeMap<String, DbValue>;
 
