@@ -29,6 +29,7 @@
 //! [`better-auth-rs-memory-adapter`]: https://docs.rs/better-auth-rs-memory-adapter
 
 pub mod crypto;
+pub mod db;
 
 pub use better_auth_rs_core as core;
 
