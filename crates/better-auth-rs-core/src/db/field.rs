@@ -11,7 +11,9 @@
 //! and a table is described by an ordered set of [`FieldAttribute`]s ([`TableSchema`]).
 
 use std::collections::BTreeMap;
+use std::fmt::Debug;
 
+use async_trait::async_trait;
 use serde_json::Value as Json;
 use time::OffsetDateTime;
 
@@ -267,3 +269,46 @@ impl TableSchema {
 
 /// The full better-auth schema: model key → table (port of `BetterAuthDBSchema`).
 pub type BetterAuthDbSchema = BTreeMap<String, TableSchema>;
+
+/// A pluggable key/value store for sessions, verifications, rate-limit counters, etc. (port of the
+/// `SecondaryStorage` interface). Implemented by the `redis-storage` crate; `None` in
+/// [`AuthContext`](crate) means database-only.
+///
+/// `get_and_delete` and `increment` are optional upstream (`getAndDelete?`/`increment?`); a backend
+/// advertises support via the `supports_*` flags, and callers fall back to read-then-delete /
+/// database counters when unsupported. Stored values are always strings (better-auth JSON-encodes).
+#[async_trait]
+pub trait SecondaryStorage: Send + Sync + Debug {
+    /// Get the value stored at `key`, or `None` if absent.
+    async fn get(&self, key: &str) -> Option<String>;
+
+    /// Store `value` at `key`, optionally expiring after `ttl` seconds.
+    async fn set(&self, key: &str, value: &str, ttl: Option<u64>);
+
+    /// Delete `key`.
+    async fn delete(&self, key: &str);
+
+    /// Whether this backend implements the atomic [`get_and_delete`](Self::get_and_delete).
+    fn supports_get_and_delete(&self) -> bool {
+        false
+    }
+
+    /// Atomically get the value at `key` and delete it (single-use consume). Returns `None` if the
+    /// key was absent. Only meaningful when [`supports_get_and_delete`](Self::supports_get_and_delete)
+    /// is `true`; the default is a no-op so callers fall back to read-then-delete.
+    async fn get_and_delete(&self, _key: &str) -> Option<String> {
+        None
+    }
+
+    /// Whether this backend implements the atomic [`increment`](Self::increment).
+    fn supports_increment(&self) -> bool {
+        false
+    }
+
+    /// Atomically increment the counter at `key`, returning the post-increment value. On creation
+    /// the key is set to `1` with `ttl` seconds (TTL applied only on creation). Returns `None` when
+    /// unsupported.
+    async fn increment(&self, _key: &str, _ttl: u64) -> Option<i64> {
+        None
+    }
+}

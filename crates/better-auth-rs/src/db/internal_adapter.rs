@@ -21,12 +21,13 @@ use std::sync::Arc;
 
 use better_auth_rs_core::db::{
     Account, AdapterError, BetterAuthDbSchema, CreateArgs, DatabaseAdapter, DbValue, DeleteArgs,
-    FindManyArgs, FindOneArgs, Row, Session, UpdateArgs, User, Verification, Where,
+    FindManyArgs, FindOneArgs, Row, Session, SortBy, SortDirection, UpdateArgs, User, Verification,
+    Where,
 };
 use time::OffsetDateTime;
 
 use super::mapping::{MappingError, row_to_entity};
-use crate::crypto::generate_random_string;
+use crate::crypto::random::{Alphabet, generate_random_string_with};
 
 /// Default session lifetime: 7 days (matches upstream `session.expiresIn` default).
 const DEFAULT_SESSION_EXPIRATION_SECS: i64 = 60 * 60 * 24 * 7;
@@ -282,9 +283,14 @@ impl InternalAdapter {
         // these always win over the override
         data.insert("expiresAt".into(), DbValue::DateTime(expires));
         data.insert("userId".into(), DbValue::String(user_id.to_string()));
+        // Upstream uses `generateId(32)` (core utils/id.ts), whose charset is a-z A-Z 0-9 —
+        // NOT `generateRandomString` (which also includes `-`/`_`). Match it exactly.
         data.insert(
             "token".into(),
-            DbValue::String(generate_random_string(SESSION_TOKEN_LEN)),
+            DbValue::String(generate_random_string_with(
+                SESSION_TOKEN_LEN,
+                &[Alphabet::LowerAlpha, Alphabet::UpperAlpha, Alphabet::Digits],
+            )),
         );
         data.insert("createdAt".into(), DbValue::DateTime(now()));
         data.insert("updatedAt".into(), DbValue::DateTime(now()));
@@ -373,14 +379,21 @@ impl InternalAdapter {
         &self,
         identifier: &str,
     ) -> Result<Option<Verification>, InternalError> {
-        let row = self
+        // Upstream sorts by createdAt desc, limit 1 — the MOST RECENT row when several share an
+        // identifier; `find_one` would return the oldest (insertion order).
+        let rows = self
             .adapter
-            .find_one(FindOneArgs::new(
-                "verification",
-                vec![Where::eq("identifier", identifier)],
-            ))
+            .find_many(
+                FindManyArgs::new("verification")
+                    .filter(vec![Where::eq("identifier", identifier)])
+                    .sort_by(SortBy {
+                        field: "createdAt".into(),
+                        direction: SortDirection::Desc,
+                    })
+                    .limit(1),
+            )
             .await?;
-        row.as_ref()
+        rows.first()
             .map(row_to_entity)
             .transpose()
             .map_err(Into::into)
@@ -388,6 +401,9 @@ impl InternalAdapter {
 
     /// Atomically consume (delete-and-return) a single verification value by id (the database path
     /// of `consumeVerificationValue`). The first caller wins; a second call returns `None`.
+    ///
+    /// Expired rows are treated as already-invalid: the row is still deleted (so it cannot be
+    /// replayed) but `None` is returned — callers don't need their own expiry gate.
     pub async fn consume_verification_value(
         &self,
         id: &str,
@@ -399,10 +415,11 @@ impl InternalAdapter {
                 r#where: vec![Where::eq("id", id)],
             })
             .await?;
-        row.as_ref()
-            .map(row_to_entity)
-            .transpose()
-            .map_err(Into::into)
+        let consumed: Option<Verification> = row.as_ref().map(row_to_entity).transpose()?;
+        Ok(match consumed {
+            Some(v) if v.expires_at < now() => None,
+            other => other,
+        })
     }
 
     /// Delete all verification values for an identifier (port of `deleteVerificationByIdentifier`).
@@ -509,6 +526,12 @@ mod tests {
             .unwrap();
         assert_eq!(session.user_id, "user-1");
         assert_eq!(session.token.len(), 32);
+        // token charset matches upstream generateId(32): a-z A-Z 0-9 only (no '-'/'_')
+        assert!(
+            session.token.chars().all(|c| c.is_ascii_alphanumeric()),
+            "token {} must be alphanumeric",
+            session.token
+        );
         assert!(session.expires_at > now());
 
         let found = ia.find_session(&session.token).await.unwrap().unwrap();
@@ -572,6 +595,77 @@ mod tests {
         assert_eq!(first.unwrap().value, "token-123");
         assert!(
             ia.consume_verification_value(&v.id)
+                .await
+                .unwrap()
+                .is_none()
+        );
+    }
+
+    #[tokio::test]
+    async fn find_verification_returns_most_recent() {
+        let ia = adapter();
+        // two rows sharing an identifier; the later createdAt must win
+        ia.create_verification_value(row(&[
+            ("identifier", "id".into()),
+            ("value", "old".into()),
+            (
+                "expiresAt",
+                DbValue::DateTime(now() + time::Duration::hours(1)),
+            ),
+            (
+                "createdAt",
+                DbValue::DateTime(now() - time::Duration::hours(2)),
+            ),
+        ]))
+        .await
+        .unwrap();
+        ia.create_verification_value(row(&[
+            ("identifier", "id".into()),
+            ("value", "new".into()),
+            (
+                "expiresAt",
+                DbValue::DateTime(now() + time::Duration::hours(1)),
+            ),
+            (
+                "createdAt",
+                DbValue::DateTime(now() - time::Duration::hours(1)),
+            ),
+        ]))
+        .await
+        .unwrap();
+        assert_eq!(
+            ia.find_verification_value("id")
+                .await
+                .unwrap()
+                .unwrap()
+                .value,
+            "new"
+        );
+    }
+
+    #[tokio::test]
+    async fn consume_expired_returns_none_but_deletes() {
+        let ia = adapter();
+        let v = ia
+            .create_verification_value(row(&[
+                ("identifier", "expired".into()),
+                ("value", "x".into()),
+                (
+                    "expiresAt",
+                    DbValue::DateTime(now() - time::Duration::minutes(1)),
+                ),
+            ]))
+            .await
+            .unwrap();
+        // expired row: returns None even on the first consume, and the row is gone
+        assert!(
+            ia.consume_verification_value(&v.id)
+                .await
+                .unwrap()
+                .is_none()
+        );
+        assert!(
+            ia.find_verification_value("expired")
                 .await
                 .unwrap()
                 .is_none()

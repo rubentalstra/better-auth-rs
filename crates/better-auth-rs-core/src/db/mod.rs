@@ -12,6 +12,6 @@ pub use adapter::{
 };
 pub use field::{
     BetterAuthDbSchema, DbFieldType, DbValue, DefaultValue, FieldAttribute, FieldReference,
-    OnDelete, Row, TableSchema,
+    OnDelete, Row, SecondaryStorage, TableSchema,
 };
 pub use schema::{Account, RateLimit, Session, User, Verification, core_tables};

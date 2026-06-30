@@ -77,11 +77,25 @@ pub struct Envelope {
 pub fn parse_envelope(data: &str) -> Option<Envelope> {
     let rest = data.strip_prefix(ENVELOPE_PREFIX)?;
     let sep = rest.find('$')?;
-    let version: u32 = rest[..sep].parse().ok()?;
+    let version = parse_version(&rest[..sep])?;
     Some(Envelope {
         version,
         ciphertext: rest[sep + 1..].to_string(),
     })
+}
+
+/// Parse the envelope version the way upstream's `parseInt(s, 10)` + `>= 0` check does: skip leading
+/// ASCII whitespace, allow a leading `+`, read leading digits, and ignore trailing non-digits
+/// (`"12abc"` -> 12). A leading `-` (negative) or no digits yields `None` (upstream's `version < 0`
+/// / `NaN` rejection). Absurd values above `u32::MAX` also yield `None` (no such secret version).
+fn parse_version(s: &str) -> Option<u32> {
+    let s = s.trim_start_matches(|c: char| c.is_ascii_whitespace());
+    let s = s.strip_prefix('+').unwrap_or(s);
+    let digits: String = s.chars().take_while(char::is_ascii_digit).collect();
+    if digits.is_empty() {
+        return None;
+    }
+    digits.parse::<u32>().ok()
 }
 
 /// Format a rotation envelope: `$ba$<version>$<ciphertext>`.
@@ -113,7 +127,10 @@ fn raw_encrypt(secret: &str, data: &str) -> Result<String, CryptoError> {
 }
 
 fn raw_decrypt(secret: &str, ciphertext_hex: &str) -> Result<String, CryptoError> {
-    let bytes = hex::decode(ciphertext_hex).map_err(|_| CryptoError::InvalidEncoding)?;
+    // Upstream decodes with @noble/ciphers `hexToBytes`, which is case-insensitive; our `hex::decode`
+    // is lowercase-only, so normalize first to accept upper/mixed-case ciphertext like noble does.
+    let bytes = hex::decode(&ciphertext_hex.to_ascii_lowercase())
+        .map_err(|_| CryptoError::InvalidEncoding)?;
     if bytes.len() < XNONCE_LEN {
         return Err(CryptoError::Decrypt);
     }

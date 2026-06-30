@@ -55,15 +55,23 @@ pub fn verify_jwt(token: &str, secret: &str) -> Option<Value> {
     validation.required_spec_claims.clear();
     validation.leeway = 0;
     validation.validate_exp = true;
-    validation.validate_nbf = false;
+    validation.validate_nbf = true; // jose's jwtVerify validates nbf as well as exp
     validation.validate_aud = false;
-    decode::<Value>(
+    let claims = decode::<Value>(
         token,
         &DecodingKey::from_secret(secret.as_bytes()),
         &validation,
     )
     .ok()
-    .map(|data| data.claims)
+    .map(|data| data.claims)?;
+    // jose treats `exp == now` as expired (inclusive `exp <= now`); jsonwebtoken with leeway 0 only
+    // rejects `exp < now`, so close the 1-second boundary here.
+    if let Some(exp) = claims.get("exp").and_then(serde_json::Value::as_i64)
+        && unix_now() >= exp
+    {
+        return None;
+    }
+    Some(claims)
 }
 
 /// JWE `dir` / `A256CBC-HS512` encrypted JWTs for the encrypted cookie-cache strategy (port of
@@ -222,8 +230,17 @@ mod jwe {
             let Ok((payload, _header)) = jwt::decode_with_decrypter(token, &decrypter) else {
                 continue;
             };
+            let now = SystemTime::now();
+            let tolerance = Duration::from_secs(CLOCK_TOLERANCE_SECS);
+            // exp: expired when now >= exp + tolerance (jose's inclusive `exp <= now - tolerance`).
             if let Some(exp) = payload.expires_at()
-                && SystemTime::now() > exp + Duration::from_secs(CLOCK_TOLERANCE_SECS)
+                && now >= exp + tolerance
+            {
+                return None;
+            }
+            // nbf: not yet valid when nbf > now + tolerance (jose validates nbf too).
+            if let Some(nbf) = payload.not_before()
+                && nbf > now + tolerance
             {
                 return None;
             }
