@@ -14,4 +14,8 @@ exclude = ["**/*.ts"]
 workspace = true
 
 [dependencies]
-# Phase 1+ wires serde/thiserror/etc. here via `{ workspace = true }`.
+serde = { workspace = true }
+serde_json = { workspace = true }
+time = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }

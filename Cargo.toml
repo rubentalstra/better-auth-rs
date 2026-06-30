@@ -66,7 +66,7 @@ garde = { version = "0.23.0", features = ["derive"] }
 reqwest = { version = "0.13.4", default-features = false, features = ["json", "rustls-tls"] }
 cookie = { version = "0.18.1", features = ["percent-encode", "signed", "private"] }
 url = "2.5.8"
-time = { version = "0.3.51", features = ["serde"] }
+time = { version = "0.3.51", features = ["serde", "serde-well-known"] }
 uuid = { version = "1.23.4", features = ["v4", "v7", "serde"] }
 
 # errors / tracing / email / rate-limit / cache / config

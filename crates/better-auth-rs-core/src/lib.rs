@@ -12,6 +12,8 @@
 //! The upstream TypeScript source lives read-only under `reference/better-auth/`
 //! and is the source of truth for intended behavior.
 
+pub mod db;
+
 /// The better-auth upstream version this port currently tracks.
 pub const UPSTREAM_VERSION: &str = "1.6.22";
 

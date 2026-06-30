@@ -17,8 +17,18 @@ workspace = true
 
 [dependencies]
 better-auth-rs-core = { workspace = true }
-# Real dependencies are wired per-phase behind the features below
-# (Phase 1: sqlx/sea-query; Phase 4: axum; Phase 6: jsonwebtoken/openidconnect/...).
+async-trait = { workspace = true }
+serde_json = { workspace = true }
+# Optional, wired by the features below.
+uuid = { workspace = true, optional = true }
+# SQLx adapter: build dynamic SQL with sqlx's own QueryBuilder (stable, sqlx-0.9-only).
+# `json`/`time`/`uuid` add the column-type support the adapter needs on top of the
+# workspace's runtime-tokio/postgres/tls-rustls features.
+sqlx = { workspace = true, optional = true, features = ["json", "time", "uuid"] }
+time = { workspace = true, optional = true }
+
+[dev-dependencies]
+tokio = { workspace = true }
 
 [features]
 # Default: the v1 transport + storage the project targets first.
@@ -26,8 +36,8 @@ default = ["axum", "sqlx-postgres"]
 
 # --- transport / storage (Rust-ecosystem names; wired in their phase) ---
 axum = []                # Phase 4 -> [dep:axum, dep:tower, dep:tower-http]
-sqlx-postgres = []       # Phase 1 -> [dep:sqlx, dep:sea-query, dep:sea-query-binder]
-memory-adapter = []      # in-memory adapter for tests/dev (upstream package name)
+sqlx-postgres = ["dep:sqlx", "dep:uuid", "dep:time"]  # PostgreSQL via SQLx (dynamic QueryBuilder)
+memory-adapter = ["dep:uuid"]  # in-memory adapter for tests/dev (upstream package name)
 
 # --- plugin features: names are EXACTLY better-auth's plugin names (kebab-case) ---
 # v1-implemented (Phase 6):

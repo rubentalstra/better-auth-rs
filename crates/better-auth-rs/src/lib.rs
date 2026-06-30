@@ -21,6 +21,8 @@
 //! intended behavior; each module is translated 1:1 and proven by ported tests plus
 //! a TS-vs-Rust differential harness.
 
+pub mod adapters;
+
 pub use better_auth_rs_core as core;
 
 /// The better-auth upstream version this port currently tracks.
