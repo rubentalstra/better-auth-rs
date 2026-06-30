@@ -5,7 +5,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::db::field::{DbFieldType, DefaultValue, FieldAttribute};
+use crate::db::types::{DbFieldType, DefaultValue, FieldAttribute};
 
 /// Base rate-limit record (port of `BaseRateLimit`).
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]

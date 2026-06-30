@@ -77,6 +77,24 @@ fn upstream_sha() -> String {
         .unwrap_or_else(|| "UNSET".to_string())
 }
 
+/// The `better-auth-rs-utils` crate ports the *separate* `@better-auth/utils` npm package, pinned in
+/// its own `UPSTREAM` file (a different repo than `UPSTREAM_PORTED`). Rows under that crate get this
+/// commit so the manifest's `upstream_sha` column stays truthful per origin.
+const UTILS_UPSTREAM_PATH: &str = "crates/better-auth-rs-utils/UPSTREAM";
+const UTILS_PREFIX: &str = "crates/better-auth-rs-utils/";
+
+fn utils_upstream_sha() -> Option<String> {
+    fs::read_to_string(UTILS_UPSTREAM_PATH).ok().and_then(|s| {
+        s.lines()
+            .find_map(|l| {
+                l.trim()
+                    .strip_prefix("commit:")
+                    .map(|v| v.trim().to_string())
+            })
+            .filter(|s| !s.is_empty())
+    })
+}
+
 /// `vendor`: copy each portable upstream source (+ its sibling `*.test.ts`) into the crate
 /// `src/` at its rust sibling's directory, then (re)write the manifest.
 fn vendor(from: &str) -> Result<String, String> {
@@ -186,9 +204,18 @@ fn write_manifest(
     sha: &str,
 ) -> Result<(), String> {
     fs::create_dir_all("port").map_err(|e| e.to_string())?;
+    let utils_sha = utils_upstream_sha();
     let mut out = String::from(MANIFEST_HEADER);
     for (ts, loc, rust, status, conf) in rows {
-        out.push_str(&format!("{ts}\t{loc}\t{rust}\t{status}\t{conf}\t{sha}\n"));
+        // Rows under the utils crate track a different upstream repo (@better-auth/utils).
+        let row_sha = if ts.starts_with(UTILS_PREFIX) {
+            utils_sha.as_deref().unwrap_or(sha)
+        } else {
+            sha
+        };
+        out.push_str(&format!(
+            "{ts}\t{loc}\t{rust}\t{status}\t{conf}\t{row_sha}\n"
+        ));
     }
     fs::write(MANIFEST_PATH, out).map_err(|e| e.to_string())
 }
@@ -286,25 +313,10 @@ fn sibling_rust_path(ts_path: &str) -> String {
         .unwrap_or_default();
     let base = p.file_name().and_then(|s| s.to_str()).unwrap_or("mod.ts");
     let file = rust_file_name(base, dir.ends_with("/src"));
-    let out = if dir.is_empty() {
+    if dir.is_empty() {
         file
     } else {
         format!("{dir}/{file}")
-    };
-    apply_renames(out)
-}
-
-/// Unavoidable file renames where the mechanical derivation would collide with a Rust reserved
-/// keyword (e.g. `type.ts` → `type.rs`, but `mod type;` is illegal and `r#type` is avoided). The
-/// port uses a chosen non-reserved name; the `.rs` module doc names its upstream `.ts`. Keep this
-/// table in sync with those files so the manifest stays an accurate 1:1 index.
-fn apply_renames(rs_path: String) -> String {
-    match rs_path.as_str() {
-        // db/type.ts → field.rs (`type` is a reserved keyword in Rust)
-        "crates/better-auth-rs-core/src/db/type.rs" => {
-            "crates/better-auth-rs-core/src/db/field.rs".into()
-        }
-        _ => rs_path,
     }
 }
 
@@ -324,10 +336,7 @@ fn derive_rust_path(rel: &str) -> String {
             format!("{}/{}", snake(other), inner),
         ),
     };
-    apply_renames(format!(
-        "{crate_root}/{}",
-        to_rust_subpath(crate_root, &sub)
-    ))
+    format!("{crate_root}/{}", to_rust_subpath(crate_root, &sub))
 }
 
 /// Map an inner subpath ("crypto/password.ts", "index.ts", ...) to its Rust file path.
@@ -355,7 +364,17 @@ fn rust_file_name(base: &str, root_index: bool) -> String {
             "mod.rs".into()
         }
     } else {
-        format!("{}.rs", snake(stem))
+        let stem = snake(stem);
+        // `type` is a Rust reserved keyword (`mod type;` is illegal, `r#type` is avoided), so a
+        // `type.ts` source becomes `types.rs` — pluralize the keyword. This is the one
+        // reserved-keyword filename in the upstream tree; both `db/type.ts` and
+        // `@better-auth/utils`' `type.ts` map to `types.rs` this way.
+        let stem = if stem == "type" {
+            "types".to_string()
+        } else {
+            stem
+        };
+        format!("{stem}.rs")
     }
 }
 

@@ -11,7 +11,7 @@ co-located `.ts` set is how we know the port is complete (1:1 coverage at a glan
 read-only spec we re-diff against on every upstream sync, and it is the fixture the TS-vs-Rust
 differential harness drives. Deleting them loses that. The baseline is pinned in
 `port/UPSTREAM_PORTED`, every file tracked in `port/manifest.tsv`. (`reference/better-auth/` holds
-the upstream `test/`, `e2e/`, and `LICENSE.md`.) We translate 1:1 into idiomatic async Rust and
+the upstream `test/`, `e2e/`, `docs/`, and `LICENSE.md`.) We translate 1:1 into idiomatic async Rust and
 prove each port with ported tests + a TS-vs-Rust differential harness.
 
 > `CLAUDE.md` is a symlink to this file. Per-directory `CLAUDE.md` files add local detail
@@ -70,9 +70,10 @@ to `docs/` (Fumadocs site) and the vendored TS reference server the differential
      doc (e.g. `//! Upstream source: db/type.ts`). Rust-only files (no `.ts`) say so explicitly.
      This keeps the 1:1 mapping identifiable even where the filename differs.
    - **File naming:** `<stem>.ts` → `<snake_stem>.rs`, `index.ts` → `mod.rs`/`lib.rs`. When the
-     snake stem is a Rust **reserved keyword**, rename to a sensible non-reserved name (do NOT use
-     `r#`): e.g. `db/type.ts` → `db/field.rs`. Record the rename in `xtask`'s `apply_renames` so
-     the manifest stays accurate, and call it out in the file's module doc.
+     snake stem is a Rust **reserved keyword**, rename by pluralizing it (do NOT use `r#`):
+     `type.ts` → `types.rs` (e.g. `db/type.ts` → `db/types.rs`, `@better-auth/utils`'s `type.ts`
+     → `types.rs`). The rename is applied mechanically by `xtask`'s `rust_file_name`, so the
+     manifest stays accurate; call it out in the file's module doc.
 4. **Per-file loop:** read `.ts` → write the Rust sibling **in full** (path from `manifest.tsv`) →
    `cargo check -p <crate>` → **port the matching `*.test.ts` in full** (every case) →
    `cargo nextest run` green → update the manifest row (`status` `drafted`→`building`→`done`,
