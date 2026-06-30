@@ -41,7 +41,9 @@ categories = ["authentication", "web-programming"]
 [workspace.dependencies]
 # internal
 better-auth-rs-core = { path = "crates/better-auth-rs-core", version = "0.0.0" }
-better-auth-rs-utils = { path = "crates/better-auth-rs-utils", version = "0.0.0" }
+# default-features = false so dependents don't pull the heavy asymmetric `ecdsa`/`rsa` modules
+# unless they ask; the utils crate's own build/tests still use its `default = ["ecdsa","rsa"]`.
+better-auth-rs-utils = { path = "crates/better-auth-rs-utils", version = "0.0.0", default-features = false }
 better-auth-rs-memory-adapter = { path = "crates/better-auth-rs-memory-adapter", version = "0.0.0" }
 better-auth-rs-sqlx-adapter = { path = "crates/better-auth-rs-sqlx-adapter", version = "0.0.0" }
 better-auth-rs-test-utils = { path = "crates/better-auth-rs-test-utils", version = "0.0.0" }
@@ -66,13 +68,27 @@ argon2 = "=0.6.0-rc.8"
 bcrypt = "0.19.2"
 password-hash = "0.6.1"
 hmac = "0.13.0"
+sha1 = "0.11.0"
 sha2 = "0.11.0"
 rand = "0.10.1"
+# rand_core 0.10 is the version the RC asymmetric stack (crypto-bigint 0.7 / elliptic-curve 0.14 /
+# ecdsa / rsa) unifies on; we impl a getrandom-backed CryptoRng over it for key generation.
+rand_core = "0.10.1"
 getrandom = "0.4.3"
 subtle = "2.6.1"
 base64 = "0.22.1"
 hex = "0.4.3"
 zeroize = "1.9.0"
+# asymmetric crypto — RC line aligned with the digest 0.11 / sha2 0.11 generation (same pre-release
+# discipline as the argon2 / sea-query-binder pins). Powers better-auth-rs-utils' ecdsa/rsa modules.
+ecdsa = "=0.17.0-rc.23"
+p256 = "=0.14.0-rc.15"
+p384 = "=0.14.0-rc.15"
+p521 = "=0.14.0-rc.15"
+signature = "3.0.0"
+spki = "0.8.0"
+pkcs8 = "0.11.0"
+rsa = "=0.10.0-rc.18"
 chacha20poly1305 = "0.11.0"
 aes-gcm = "0.11.0"
 hkdf = "0.13.0"

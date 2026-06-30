@@ -13,11 +13,12 @@
 //! / [`EcdsaPublicKey`].
 
 use p256::ecdsa::signature::{Signer, Verifier};
+use p256::elliptic_curve::Generate;
+use p256::elliptic_curve::sec1::ToSec1Point;
 use pkcs8::{DecodePrivateKey, EncodePrivateKey};
 use spki::{DecodePublicKey, EncodePublicKey};
 
 use crate::base64::base64_url;
-use crate::rng::OsCsprng;
 use crate::types::{EcdsaCurve, ExportKeyFormat, ShaFamily};
 
 /// Errors from ECDSA operations.
@@ -91,10 +92,14 @@ fn export_err(e: impl core::fmt::Display) -> EcdsaError {
 pub fn generate_key_pair(curve: EcdsaCurve) -> Result<(Vec<u8>, Vec<u8>), EcdsaError> {
     macro_rules! make {
         ($m:ident) => {{
-            let sk = $m::ecdsa::SigningKey::random(&mut OsCsprng);
+            let sk = $m::ecdsa::SigningKey::generate();
             let vk = sk.verifying_key();
             let priv_der = sk.to_pkcs8_der().map_err(export_err)?.as_bytes().to_vec();
-            let pub_der = vk.to_public_key_der().map_err(export_err)?.as_bytes().to_vec();
+            let pub_der = vk
+                .to_public_key_der()
+                .map_err(export_err)?
+                .as_bytes()
+                .to_vec();
             (priv_der, pub_der)
         }};
     }
@@ -106,17 +111,20 @@ pub fn generate_key_pair(curve: EcdsaCurve) -> Result<(Vec<u8>, Vec<u8>), EcdsaE
 }
 
 /// Import a PKCS#8-DER private key for `curve`.
-pub fn import_private_key(pkcs8_der: &[u8], curve: EcdsaCurve) -> Result<EcdsaPrivateKey, EcdsaError> {
+pub fn import_private_key(
+    pkcs8_der: &[u8],
+    curve: EcdsaCurve,
+) -> Result<EcdsaPrivateKey, EcdsaError> {
     Ok(match curve {
-        EcdsaCurve::P256 => {
-            EcdsaPrivateKey::P256(p256::ecdsa::SigningKey::from_pkcs8_der(pkcs8_der).map_err(import_err)?)
-        }
-        EcdsaCurve::P384 => {
-            EcdsaPrivateKey::P384(p384::ecdsa::SigningKey::from_pkcs8_der(pkcs8_der).map_err(import_err)?)
-        }
-        EcdsaCurve::P521 => {
-            EcdsaPrivateKey::P521(p521::ecdsa::SigningKey::from_pkcs8_der(pkcs8_der).map_err(import_err)?)
-        }
+        EcdsaCurve::P256 => EcdsaPrivateKey::P256(
+            p256::ecdsa::SigningKey::from_pkcs8_der(pkcs8_der).map_err(import_err)?,
+        ),
+        EcdsaCurve::P384 => EcdsaPrivateKey::P384(
+            p384::ecdsa::SigningKey::from_pkcs8_der(pkcs8_der).map_err(import_err)?,
+        ),
+        EcdsaCurve::P521 => EcdsaPrivateKey::P521(
+            p521::ecdsa::SigningKey::from_pkcs8_der(pkcs8_der).map_err(import_err)?,
+        ),
     })
 }
 
@@ -140,8 +148,9 @@ pub fn import_public_key(spki_der: &[u8], curve: EcdsaCurve) -> Result<EcdsaPubl
 pub fn sign(key: &EcdsaPrivateKey, data: &[u8], _hash: ShaFamily) -> Result<Vec<u8>, EcdsaError> {
     macro_rules! sign_with {
         ($sk:expr, $m:ident) => {{
-            let sig: $m::ecdsa::Signature =
-                $sk.try_sign(data).map_err(|e| EcdsaError::Sign(e.to_string()))?;
+            let sig: $m::ecdsa::Signature = $sk
+                .try_sign(data)
+                .map_err(|e| EcdsaError::Sign(e.to_string()))?;
             sig.to_bytes().as_slice().to_vec()
         }};
     }
@@ -196,9 +205,7 @@ impl EcdsaPrivateKey {
                     )),
                     ExportKeyFormat::Raw => Ok(ExportedKey::Raw($sk.to_bytes().as_slice().to_vec())),
                     ExportKeyFormat::Jwk => {
-                        let pk = $m::PublicKey::from_affine(*$sk.verifying_key().as_affine())
-                            .map_err(export_err)?;
-                        let pt = pk.to_encoded_point(false);
+                        let pt = $sk.verifying_key().as_affine().to_sec1_point(false);
                         let x = pt.x().ok_or_else(|| EcdsaError::Export("missing affine x".into()))?;
                         let y = pt.y().ok_or_else(|| EcdsaError::Export("missing affine y".into()))?;
                         Ok(ExportedKey::Jwk(serde_json::json!({
@@ -241,12 +248,10 @@ impl EcdsaPublicKey {
                         $vk.to_public_key_der().map_err(export_err)?.as_bytes().to_vec(),
                     )),
                     ExportKeyFormat::Raw => {
-                        let pk = $m::PublicKey::from_affine(*$vk.as_affine()).map_err(export_err)?;
-                        Ok(ExportedKey::Raw(pk.to_encoded_point(false).as_bytes().to_vec()))
+                        Ok(ExportedKey::Raw($vk.as_affine().to_sec1_point(false).as_bytes().to_vec()))
                     }
                     ExportKeyFormat::Jwk => {
-                        let pk = $m::PublicKey::from_affine(*$vk.as_affine()).map_err(export_err)?;
-                        let pt = pk.to_encoded_point(false);
+                        let pt = $vk.as_affine().to_sec1_point(false);
                         let x = pt.x().ok_or_else(|| EcdsaError::Export("missing affine x".into()))?;
                         let y = pt.y().ok_or_else(|| EcdsaError::Export("missing affine y".into()))?;
                         Ok(ExportedKey::Jwk(serde_json::json!({

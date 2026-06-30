@@ -67,7 +67,9 @@ pub struct RsaPrivate(RsaPrivateKey);
 // Redacted Debug — never expose private key material.
 impl core::fmt::Debug for RsaPrivate {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct("RsaPrivate").field("d", &"<redacted>").finish()
+        f.debug_struct("RsaPrivate")
+            .field("d", &"<redacted>")
+            .finish()
     }
 }
 

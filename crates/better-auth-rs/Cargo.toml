@@ -18,7 +18,8 @@ workspace = true
 [dependencies]
 better-auth-rs-core = { workspace = true }
 # Low-level crypto/encoding primitives (port of @better-auth/utils): random, hash, password (scrypt),
-# base64, hex, binary.
+# base64, hex, binary. The workspace entry sets default-features = false, so the heavy asymmetric
+# `ecdsa`/`rsa` modules are not pulled in (this crate has its own JWT/JOSE stack).
 better-auth-rs-utils = { workspace = true }
 async-trait = { workspace = true }
 serde = { workspace = true }

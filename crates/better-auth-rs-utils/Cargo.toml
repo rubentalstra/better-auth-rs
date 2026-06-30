@@ -6,17 +6,37 @@ rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
-description = "Low-level crypto/encoding utilities for better-auth-rs (port of @better-auth/utils): random, hash, password (scrypt), base64, hex, binary."
+description = "Low-level crypto/encoding utilities for better-auth-rs (port of @better-auth/utils): random, hash, hmac, password (scrypt), otp (HOTP/TOTP), ecdsa, rsa, base64, base32, hex, binary."
 # Co-located upstream .ts references are read-only porting aids — never published.
 exclude = ["**/*.ts"]
 
 [lints]
 workspace = true
 
+[features]
+# Heavy asymmetric crypto is on by default (full @better-auth/utils parity) but can be dropped by
+# downstreams that don't need it (e.g. the main crate, which has its own JWT/JOSE stack).
+default = ["ecdsa", "rsa"]
+# ECDSA key generation uses `Generate::generate()` (getrandom-backed) — no rand_core needed.
+ecdsa = ["dep:p256", "dep:p384", "dep:p521", "dep:spki", "dep:pkcs8", "dep:serde_json"]
+# RSA keygen + OAEP encrypt take an explicit `&mut impl CryptoRng`, so rsa needs the adapter.
+rsa = ["dep:rsa", "dep:spki", "dep:pkcs8", "dep:serde_json", "dep:rand_core"]
+
 [dependencies]
+hmac = { workspace = true }
+sha1 = { workspace = true }
 sha2 = { workspace = true }
 scrypt = { workspace = true }
 getrandom = { workspace = true }
 subtle = { workspace = true }
 unicode-normalization = { workspace = true }
 thiserror = { workspace = true }
+# asymmetric (optional; see [features])
+p256 = { workspace = true, optional = true, features = ["ecdsa", "pkcs8"] }
+p384 = { workspace = true, optional = true, features = ["ecdsa", "pkcs8"] }
+p521 = { workspace = true, optional = true, features = ["ecdsa", "pkcs8"] }
+rsa = { workspace = true, optional = true, features = ["sha2"] }
+spki = { workspace = true, optional = true }
+pkcs8 = { workspace = true, optional = true }
+rand_core = { workspace = true, optional = true }
+serde_json = { workspace = true, optional = true }
