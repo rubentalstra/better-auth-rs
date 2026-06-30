@@ -1,22 +1,15 @@
 //! # better-auth-rs-core
 //!
-//! Framework-agnostic primitives for [`better-auth-rs`], a faithful Rust port of
-//! [better-auth](https://github.com/better-auth/better-auth) (`@better-auth/core`).
+//! Framework-agnostic primitives for `better-auth-rs`, a faithful 1:1 Rust port of
+//! [`@better-auth/core`](https://github.com/better-auth/better-auth). The upstream TypeScript is
+//! vendored read-only as co-located `.ts` siblings (the spec); modules are ported bottom-up,
+//! file-by-file — see `port/manifest.tsv` and this crate's `src/CLAUDE.md`.
 //!
-//! This crate will hold the parts of better-auth that do not depend on any web
-//! framework or database driver: the data model (`user`/`session`/`account`/
-//! `verification`), the `DatabaseAdapter` trait, the OAuth2 protocol layer, the
-//! social-provider registry, error codes, and the plugin/context type system.
-//!
-//! Modules are filled in during **Phase 1+** of the port (see `.claude/phases/`).
-//! The upstream TypeScript source is vendored read-only as co-located `.ts` siblings and is the
-//! source of truth for intended behavior.
+//! Upstream source: `index.ts` (`export * from "./types"`) — the public re-export surface is wired
+//! here as modules land. Port in progress: no modules are wired yet.
 
-pub mod db;
-pub mod secret;
-
-/// The better-auth upstream version this port currently tracks.
-pub const UPSTREAM_VERSION: &str = "1.6.22";
+/// The better-auth upstream version this port currently tracks (pinned in `port/UPSTREAM_PORTED`).
+pub const UPSTREAM_VERSION: &str = "1.6.23";
 
 /// The version of this crate.
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
