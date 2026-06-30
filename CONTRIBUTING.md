@@ -4,9 +4,12 @@ Thanks for helping build a faithful Rust port of better-auth!
 
 ## Ground rules
 
-- **The reference is the spec.** The upstream TypeScript under `reference/better-auth/` (pinned in
-  `port/UPSTREAM_PORTED`) is the source of truth for intended behavior. Port behavior 1:1,
-  bug-for-bug; don't "fix" apparent upstream bugs in a port — match them and file an issue.
+- **The reference is the spec.** For each module, the **co-located sibling `.ts`** (same folder as
+  the `.rs`, both in `crates/*/src/`) is the source of truth for intended behavior; the baseline is
+  pinned in `port/UPSTREAM_PORTED`. **Keep every `.ts` — never edit or delete it.** Port behavior
+  1:1, bug-for-bug; don't "fix" apparent upstream bugs in a port — match them and file an issue.
+  [AGENTS.md](./AGENTS.md) is the single source of truth for the full porting contract; this file
+  is the quick start.
 - **Toolchain is pinned** to Rust `1.96.0`, edition `2024` (`rust-toolchain.toml`).
 - **Branches** start with `claude/` or a short descriptive prefix.
 - **Commits** follow [Conventional Commits](https://www.conventionalcommits.org/) — the release

@@ -1,6 +1,6 @@
 ---
 name: porting-ts-to-rust
-description: How to translate a better-auth TypeScript source file into idiomatic async Rust for better-auth-rs. Use when porting any file under reference/better-auth into crates/, or when unsure how a TS construct maps to Rust.
+description: How to translate a better-auth TypeScript source file into idiomatic async Rust for better-auth-rs. Use when porting any co-located .ts spec in crates/*/src/, or when unsure how a TS construct maps to Rust.
 ---
 
 # Porting better-auth TS → idiomatic async Rust
@@ -8,8 +8,9 @@ description: How to translate a better-auth TypeScript source file into idiomati
 The **co-located sibling `.ts`** (same folder as the `.rs` you're writing) is the **spec** —
 better-auth's source is vendored right next to where each `.rs` goes. Port behavior 1:1,
 bug-for-bug; keep control flow, ordering, names, and comments close to upstream so future
-upstream diffs re-port cleanly. Find the file's `rust_path` in `port/manifest.tsv`. Delete the
-`.ts` once its `.rs` is fully ported and green.
+upstream diffs re-port cleanly. Find the file's `rust_path` in `port/manifest.tsv`. **Keep the
+`.ts` permanently — never edit or delete it** (it is the 1:1 coverage map, the re-sync diff
+target, and the differential-harness fixture; see AGENTS.md rule 1).
 
 ## Per-file loop
 

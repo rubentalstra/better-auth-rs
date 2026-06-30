@@ -35,10 +35,16 @@ prove each port with ported tests + a TS-vs-Rust differential harness.
 - `crates/better-auth-rs-core` — `@better-auth/core`: data model, `DatabaseAdapter` trait,
   OAuth2 protocol, social-provider registry, error codes, plugin/context types. No web/db driver deps.
 - `crates/better-auth-rs` — `packages/better-auth`: api/routes, auth, cookies, crypto, db,
-  adapters (`sqlx_postgres`, `memory`), `integrations/axum`, `plugins/*`. **The published crate.**
-  Everything optional is behind a Cargo feature **named exactly like its upstream plugin/package**
-  (`two-factor`, `organization`, `api-key`, `jwt`, `oidc-provider`, …). `axum`/`sqlx-postgres`
-  are the only Rust-ecosystem feature names. `default = ["axum","sqlx-postgres"]`.
+  `integrations/axum`, `plugins/*`. **The published crate.** Each *in-package* plugin
+  (`packages/better-auth/src/plugins/*`) is a module behind a Cargo feature **named exactly like
+  its upstream plugin** (`two-factor`, `organization`, `jwt`, `oidc-provider`, …). `axum` and
+  `jwe` are the only Rust-ecosystem feature names. **`default = ["axum"]`** —
+  `crates/better-auth-rs/Cargo.toml` is the definitive feature list.
+- **Storage adapters and separate-package plugins are their own crates, NOT features** of
+  `better-auth-rs`: storage = `better-auth-rs-memory-adapter`, `better-auth-rs-sqlx-adapter`,
+  `better-auth-rs-redis-storage`; separate-package plugins = `better-auth-rs-api-key`,
+  `-passkey`, `-sso`, `-scim`, `-oauth-provider`, …. Pick a storage backend by depending on its
+  adapter crate.
 - `xtask` — porting/sync/differential tooling (std-only, no network).
 
 This repo is a **dual workspace**: Cargo for the Rust library; a pnpm workspace (Node) scoped only

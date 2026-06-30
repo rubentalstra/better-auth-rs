@@ -11,7 +11,8 @@ library for Rust — a faithful, file-by-file port of
 async Rust.
 
 > **Status: early / under active porting.** The library is being built up subsystem-by-subsystem
-> (see `.claude/phases/`). It currently tracks better-auth **v1.6.22**.
+> (see `.claude/phases/`). It currently tracks better-auth **v1.6.23** (baseline pinned in
+> `port/UPSTREAM_PORTED`).
 
 ## Why
 
@@ -25,9 +26,12 @@ mature Rust crates.
 
 - **Framework-agnostic core** that operates on `http` types and implements `tower::Service`, with
   thin per-framework adapters.
-- **`axum`** integration and **PostgreSQL via SQLx** ship first, both behind Cargo features.
-- **Plugins are opt-in features named exactly like their better-auth counterparts**
-  (`two-factor`, `organization`, `admin`, `api-key`, `jwt`, `oidc-provider`, …).
+- **`axum`** integration ships first, behind a Cargo feature. **PostgreSQL via SQLx** ships as a
+  companion adapter crate (`better-auth-rs-sqlx-adapter`) — storage is chosen by depending on an
+  adapter crate, not by a feature flag.
+- **In-package plugins are opt-in features named exactly like their better-auth counterparts**
+  (`two-factor`, `organization`, `admin`, `jwt`, `oidc-provider`, …). Separate-package plugins
+  (`api-key`, `passkey`, `sso`, …) are their own `better-auth-rs-*` crates.
 - **Behavioral parity is proven**, not assumed: better-auth's test suite is ported to Rust and a
   differential harness replays identical requests against the TypeScript server and the Rust server.
 
@@ -35,11 +39,13 @@ mature Rust crates.
 
 ```toml
 [dependencies]
-better-auth-rs = { version = "0.1", features = ["axum", "sqlx-postgres", "organization", "two-factor", "jwt"] }
+better-auth-rs = { version = "0.1", features = ["axum", "organization", "two-factor", "jwt"] }
+# Choose a storage backend by depending on an adapter crate:
+better-auth-rs-sqlx-adapter = "0.1"   # PostgreSQL via SQLx
 ```
 
-`default = ["axum", "sqlx-postgres"]`. Add the plugin features you need — each is named after the
-upstream better-auth plugin.
+`default = ["axum"]`. Add the in-package plugin features you need — each is named after the
+upstream better-auth plugin. Storage backends are separate adapter crates, not features.
 
 ## Compatibility
 
@@ -53,9 +59,13 @@ upstream better-auth plugin.
 |------------------------------|---------------------------------------------------------------|
 | `crates/better-auth-rs-core` | Framework-agnostic primitives (port of `@better-auth/core`)   |
 | `crates/better-auth-rs`      | The published crate (api, plugins, adapters, axum)            |
-| `reference/better-auth`      | Read-only vendored TS source — the porting spec (not shipped) |
+| `reference/better-auth`      | Read-only vendored upstream `test/`, `e2e/`, `docs/`, `LICENSE` |
 | `port/`                      | Porting manifest + pinned upstream baseline                   |
 | `.claude/`                   | Porting methodology: phases, skills, hooks                    |
+
+The per-file porting spec for each module is the **co-located `.ts` sibling** beside its `.rs` in
+`crates/*/src/` (read-only, excluded from publish, kept permanently). `reference/better-auth` holds
+only the upstream pieces that don't map to a single `.rs` sibling.
 
 ## Toolchain
 

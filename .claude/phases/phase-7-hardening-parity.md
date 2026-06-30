@@ -1,6 +1,6 @@
-# Phase 7 — Hardening + parity gate + retire TS
+# Phase 7 — Hardening + parity gate + ship without bundling TS
 
-**Goal:** full parity gate, polish, retire the shipped TS, tag v0.1.
+**Goal:** full parity gate, polish, confirm the published crate bundles no `.ts`, tag v0.1.
 **Preconditions:** Phase 6.
 
 ## Scope
@@ -19,5 +19,6 @@ and `-p better-auth-rs-core` succeed; docs static export builds.
 
 ## Exit criteria
 
-`v0.1.0` tagged and published to crates.io; docs live on GitHub Pages; the TS is retired from
-the product (kept only as the sync baseline / on-demand fetch).
+`v0.1.0` tagged and published to crates.io; docs live on GitHub Pages; the published crate
+carries no `.ts` (already `exclude`d). The co-located `.ts` stays in the repo permanently — the
+1:1 spec and sync baseline; it is never deleted.

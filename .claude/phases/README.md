@@ -8,8 +8,9 @@ order; each lists its preconditions.
 
 For each file the phase covers (rows in `port/manifest.tsv`):
 
-1. **Read the spec** — open the sibling `.ts` under `reference/better-auth/`. It is the
-   source of truth for intended behavior. Port **bug-for-bug**; don't "fix" upstream here.
+1. **Read the spec** — open the **co-located sibling `.ts`** in `crates/*/src/` (same folder as
+   the `.rs` you're writing). It is the source of truth for intended behavior. Port
+   **bug-for-bug**; don't "fix" upstream here. Keep the `.ts` — never edit or delete it.
 2. **Write the Rust sibling** at the `rust_path` from the manifest (idiomatic async Rust).
 3. `cargo check -p <crate>` until it compiles.
 4. **Port the matching test** (`*.test.ts` → Rust) and `cargo nextest run -p <crate> <filter>`
@@ -37,5 +38,5 @@ For each file the phase covers (rows in `port/manifest.tsv`):
 | 4 | `phase-4-axum-integration.md` | Runnable axum server + differential harness |
 | 5 | `phase-5-oauth-social.md` | OAuth2 + ~35 social providers |
 | 6 | `phase-6-plugins.md` | v1 plugins (RBAC, 2FA/passwordless, tokens) |
-| 7 | `phase-7-hardening-parity.md` | Full parity gate, retire TS, tag v0.1 |
+| 7 | `phase-7-hardening-parity.md` | Full parity gate, ship without bundling TS, tag v0.1 |
 | ∞ | `phase-sync-upstream.md` | Full-auto upstream release tracking |
