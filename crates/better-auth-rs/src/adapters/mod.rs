@@ -9,6 +9,10 @@ pub mod memory;
 #[cfg(feature = "sqlx-postgres")]
 pub mod sqlx_postgres;
 
+/// Backend-agnostic conformance battery shared by every adapter's tests.
+#[cfg(test)]
+pub(crate) mod conformance;
+
 /// Generate an opaque text id, used when `create` is called without one (better-auth ids are
 /// opaque strings). Shared by the adapters that need to mint ids.
 #[cfg(any(feature = "memory-adapter", feature = "sqlx-postgres"))]

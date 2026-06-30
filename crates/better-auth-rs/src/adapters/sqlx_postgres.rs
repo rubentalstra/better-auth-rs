@@ -763,4 +763,20 @@ mod tests {
             .unwrap();
         assert_eq!(deleted, 1);
     }
+
+    #[tokio::test]
+    async fn conformance() {
+        let Ok(url) = std::env::var("DATABASE_URL") else {
+            eprintln!("skipping: DATABASE_URL not set");
+            return;
+        };
+        let Ok(a) = SqlxPostgresAdapter::connect(&url).await else {
+            eprintln!("skipping: Postgres unreachable");
+            return;
+        };
+        a.run_migrations(&crate::adapters::conformance::test_schema())
+            .await
+            .unwrap();
+        crate::adapters::conformance::run_conformance(&a).await;
+    }
 }

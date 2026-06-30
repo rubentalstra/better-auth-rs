@@ -590,4 +590,10 @@ mod tests {
             .unwrap();
         assert!(blocked.is_none());
     }
+
+    #[tokio::test]
+    async fn conformance() {
+        let adapter = MemoryAdapter::new();
+        crate::adapters::conformance::run_conformance(&adapter).await;
+    }
 }
