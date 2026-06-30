@@ -23,3 +23,7 @@ async-trait = { workspace = true }
 # cookie vocabulary, modeled on rather than hand-rolled. See src/CLAUDE.md.
 http = { workspace = true }
 cookie = { workspace = true }
+
+[dev-dependencies]
+# Test-only async runtime for exercising async traits (e.g. SecondaryStorage). Not shipped.
+tokio = { workspace = true }

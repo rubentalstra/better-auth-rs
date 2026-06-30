@@ -358,14 +358,14 @@ crates/better-auth-rs-core/src/db/adapter/types.ts	134	crates/better-auth-rs-cor
 crates/better-auth-rs-core/src/db/adapter/utils.ts	61	crates/better-auth-rs-core/src/db/adapter/utils.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/get-tables.ts	304	crates/better-auth-rs-core/src/db/get_tables.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/index.ts	43	crates/better-auth-rs-core/src/db/mod.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/db/plugin.ts	11	crates/better-auth-rs-core/src/db/plugin.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/db/plugin.ts	11	crates/better-auth-rs-core/src/db/plugin.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/schema/account.ts	47	crates/better-auth-rs-core/src/db/schema/account.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/schema/rate-limit.ts	36	crates/better-auth-rs-core/src/db/schema/rate_limit.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/schema/session.ts	29	crates/better-auth-rs-core/src/db/schema/session.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/schema/shared.ts	7	crates/better-auth-rs-core/src/db/schema/shared.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/schema/user.ts	31	crates/better-auth-rs-core/src/db/schema/user.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/db/schema/verification.ts	28	crates/better-auth-rs-core/src/db/schema/verification.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
-crates/better-auth-rs-core/src/db/type.ts	360	crates/better-auth-rs-core/src/db/types.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
+crates/better-auth-rs-core/src/db/type.ts	360	crates/better-auth-rs-core/src/db/types.rs	done	high	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/env/color-depth.ts	172	crates/better-auth-rs-core/src/env/color_depth.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/env/env-impl.ts	123	crates/better-auth-rs-core/src/env/env_impl.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
 crates/better-auth-rs-core/src/env/index.ts	23	crates/better-auth-rs-core/src/env/mod.rs	todo	-	9dfceee14021fc15a2fb93023f39635f25b0b5ba
