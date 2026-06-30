@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, next]
+  merge_group:
+
+# Default to no permissions; jobs opt in as needed.
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+# NOTE: actions are pinned by major tag for now; pin to commit SHAs before going public
+# (zizmor / Renovate will enforce digest pinning).
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo fmt --all --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+
+  check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        features: ["", "--no-default-features", "--all-features"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo check --workspace --all-targets ${{ matrix.features }}
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: better_auth
+          POSTGRES_PASSWORD: better_auth
+          POSTGRES_DB: better_auth
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U better_auth"
+          --health-interval 2s --health-timeout 3s --health-retries 20
+    env:
+      DATABASE_URL: postgres://better_auth:better_auth@localhost:5432/better_auth
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-nextest
+      # `--no-tests=pass` keeps CI green while the suite is still being ported.
+      - run: cargo nextest run --workspace --all-features --no-tests=pass
+
+  # Single required status check (matches better-auth's alls-green gate).
+  ci:
+    if: always()
+    needs: [fmt, clippy, check, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: re-actors/alls-green@release/v1
+        with:
+          jobs: ${{ toJSON(needs) }}

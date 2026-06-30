@@ -1,0 +1,18 @@
+name: Semantic Pull Request
+
+# Enforce Conventional-Commit PR titles — the release tooling (release-plz) derives the
+# changelog and version bumps from them.
+on:
+  pull_request_target:
+    types: [opened, edited, reopened, synchronize]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

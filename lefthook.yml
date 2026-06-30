@@ -1,0 +1,20 @@
+# Git hooks for contributors who don't use Claude Code (mirrors the .claude/ hooks).
+# Install with: lefthook install
+pre-commit:
+  parallel: true
+  commands:
+    fmt:
+      glob: "*.rs"
+      run: cargo fmt --all -- --check
+      fail_text: "Run `cargo fmt --all` to format."
+    clippy:
+      glob: "*.rs"
+      run: cargo clippy --workspace --all-targets -- -D warnings
+
+commit-msg:
+  commands:
+    conventional:
+      # Enforce a Conventional-Commits-style subject (type(scope)?: subject).
+      run: |
+        head -1 {1} | grep -Eq '^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\(.+\))?!?: .+' \
+          || { echo "commit message must follow Conventional Commits (e.g. 'feat(db): ...')"; exit 1; }

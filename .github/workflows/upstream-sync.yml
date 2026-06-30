@@ -1,0 +1,47 @@
+name: Upstream sync
+
+# Detect drift against the pinned better-auth baseline (port/UPSTREAM_PORTED) and surface a
+# per-file re-port checklist. The diff/issue logic lands fully once `cargo xtask sync` is
+# implemented (Phase 7 / ongoing); this is the scaffold.
+on:
+  schedule:
+    - cron: "0 6 * * 1" # Mondays 06:00 UTC
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "better-auth tag to sync to (default: latest release)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  diff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Resolve target better-auth version
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_TAG: ${{ inputs.tag }}
+        run: |
+          if [ -n "$INPUT_TAG" ]; then
+            TAG="$INPUT_TAG"
+          else
+            TAG="$(gh api repos/better-auth/better-auth/releases/latest --jq .tag_name)"
+          fi
+          # Validate before using anywhere — never trust the value unquoted.
+          if ! printf '%s' "$TAG" | grep -Eq '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::unexpected better-auth tag format: $TAG"
+            exit 1
+          fi
+          echo "BA_TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Diff against pinned baseline
+        env:
+          BA_TAG: ${{ env.BA_TAG }}
+        run: cargo run -p xtask -- sync --to "$BA_TAG"

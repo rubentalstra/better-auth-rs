@@ -1,0 +1,6 @@
+[toolchain]
+# MSRV / pinned toolchain for the whole workspace. Edition 2024 needs >= 1.85;
+# we pin 1.96.0 (matches `rust-version` in the workspace Cargo.toml).
+channel = "1.96.0"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

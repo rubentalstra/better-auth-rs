@@ -1,0 +1,57 @@
+[package]
+name = "better-auth-rs"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "A faithful Rust port of better-auth — comprehensive, framework-agnostic authentication. axum + PostgreSQL (SQLx) behind feature flags."
+readme = "../../README.md"
+# Co-located upstream .ts references are read-only porting aids — never publish them,
+# nor the porting tooling/reference dirs.
+exclude = ["**/*.ts", "/reference", "/port", "/.claude", "/tests/differential"]
+
+[lints]
+workspace = true
+
+[dependencies]
+better-auth-rs-core = { workspace = true }
+# Real dependencies are wired per-phase behind the features below
+# (Phase 1: sqlx/sea-query; Phase 4: axum; Phase 6: jsonwebtoken/openidconnect/...).
+
+[features]
+# Default: the v1 transport + storage the project targets first.
+default = ["axum", "sqlx-postgres"]
+
+# --- transport / storage (Rust-ecosystem names; wired in their phase) ---
+axum = []                # Phase 4 -> [dep:axum, dep:tower, dep:tower-http]
+sqlx-postgres = []       # Phase 1 -> [dep:sqlx, dep:sea-query, dep:sea-query-binder]
+memory-adapter = []      # in-memory adapter for tests/dev (upstream package name)
+
+# --- plugin features: names are EXACTLY better-auth's plugin names (kebab-case) ---
+# v1-implemented (Phase 6):
+access = []
+organization = []
+admin = []
+two-factor = []
+magic-link = []
+email-otp = []
+phone-number = []
+bearer = []
+api-key = []
+jwt = []                 # -> [dep:jsonwebtoken, dep:jose-jwk]
+oidc-provider = ["jwt"]  # -> + [dep:openidconnect]
+
+# Convenience: every implemented feature (standard Cargo convention).
+full = [
+    "axum", "sqlx-postgres", "memory-adapter",
+    "access", "organization", "admin",
+    "two-factor", "magic-link", "email-otp", "phone-number",
+    "bearer", "api-key", "jwt", "oidc-provider",
+]
+
+# Declared post-v1 with the same upstream names (never renamed): anonymous, username,
+# generic-oauth, multi-session, captcha, haveibeenpwned, device-authorization, one-tap,
+# one-time-token, open-api, custom-session, additional-fields, last-login-method, mcp,
+# oauth-proxy, oauth-popup, passkey, siwe, sso, scim, stripe, oauth-provider.
