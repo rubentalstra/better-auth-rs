@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 
 use async_trait::async_trait;
 
-use crate::db::field::{DbValue, Row};
+use crate::db::types::{DbValue, Row};
 
 /// Comparison operator for a [`Where`] clause (port of `WhereOperator`).
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]

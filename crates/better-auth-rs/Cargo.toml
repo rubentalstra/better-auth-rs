@@ -6,7 +6,7 @@ rust-version.workspace = true
 license.workspace = true
 repository.workspace = true
 authors.workspace = true
-description = "A faithful Rust port of better-auth — comprehensive, framework-agnostic authentication. axum + PostgreSQL (SQLx) behind feature flags."
+description = "A faithful Rust port of better-auth — comprehensive, framework-agnostic authentication. axum behind a feature flag; PostgreSQL via the companion better-auth-rs-sqlx-adapter crate."
 readme = "../../README.md"
 # Co-located upstream .ts references are read-only porting aids — never publish them,
 # nor the porting tooling/reference dirs.
@@ -17,30 +17,51 @@ workspace = true
 
 [dependencies]
 better-auth-rs-core = { workspace = true }
+# Low-level crypto/encoding primitives (port of @better-auth/utils): random, hash, password (scrypt),
+# base64, hex, binary. The workspace entry sets default-features = false, so the heavy asymmetric
+# `ecdsa`/`rsa` modules are not pulled in (this crate has its own JWT/JOSE stack).
+better-auth-rs-utils = { workspace = true }
 async-trait = { workspace = true }
+serde = { workspace = true }
 serde_json = { workspace = true }
-# Optional, wired by the features below.
-uuid = { workspace = true, optional = true }
-# SQLx adapter: build dynamic SQL with sqlx's own QueryBuilder (stable, sqlx-0.9-only).
-# `json`/`time`/`uuid` add the column-type support the adapter needs on top of the
-# workspace's runtime-tokio/postgres/tls-rustls features.
-sqlx = { workspace = true, optional = true, features = ["json", "time", "uuid"] }
-time = { workspace = true, optional = true }
+time = { workspace = true }
+url = { workspace = true }
+garde = { workspace = true }
+tracing = { workspace = true }
+thiserror = { workspace = true }
+
+# crypto (always-on): the better-auth `crypto/` layer — XChaCha20-Poly1305 AEAD, HMAC signing,
+# HKDF key derivation, HS256 JWT, constant-time compare. (scrypt/random/hash/encodings live in
+# better-auth-rs-utils.)
+chacha20poly1305 = { workspace = true }
+hmac = { workspace = true }
+sha2 = { workspace = true }
+hkdf = { workspace = true }
+subtle = { workspace = true }
+getrandom = { workspace = true }
+jsonwebtoken = { workspace = true }
+cookie = { workspace = true }
+
+# JWE A256CBC-HS512 for the encrypted cookie-cache strategy (behind `jwe`).
+josekit = { workspace = true, optional = true }
 
 [dev-dependencies]
 tokio = { workspace = true }
+better-auth-rs-memory-adapter = { workspace = true }
 
 [features]
-# Default: the v1 transport + storage the project targets first.
-default = ["axum", "sqlx-postgres"]
+# Default: the v1 transport the project targets first. Storage is chosen by depending on an
+# adapter crate (better-auth-rs-sqlx-adapter / better-auth-rs-memory-adapter).
+default = ["axum"]
 
-# --- transport / storage (Rust-ecosystem names; wired in their phase) ---
-axum = []                # Phase 4 -> [dep:axum, dep:tower, dep:tower-http]
-sqlx-postgres = ["dep:sqlx", "dep:uuid", "dep:time"]  # PostgreSQL via SQLx (dynamic QueryBuilder)
-memory-adapter = ["dep:uuid"]  # in-memory adapter for tests/dev (upstream package name)
+# --- transport (Rust-ecosystem name; wired in Phase 4) ---
+axum = []                # -> [dep:axum, dep:tower, dep:tower-http]
+jwe = ["dep:josekit"]    # encrypted (A256CBC-HS512) cookie-cache strategy via josekit (vendored OpenSSL)
 
-# --- plugin features: names are EXACTLY better-auth's plugin names (kebab-case) ---
-# v1-implemented (Phase 6):
+# --- IN-PACKAGE plugin features: names are EXACTLY better-auth's plugin names (kebab-case).
+# These live in packages/better-auth/src/plugins/*, so they are modules here, not separate crates.
+# (Separate-package plugins like api-key, passkey, sso, scim, stripe, oauth-provider are their own
+# better-auth-rs-* crates, NOT features.) v1-implemented set (Phase 6):
 access = []
 organization = []
 admin = []
@@ -49,19 +70,18 @@ magic-link = []
 email-otp = []
 phone-number = []
 bearer = []
-api-key = []
 jwt = []                 # -> [dep:jsonwebtoken, dep:jose-jwk]
 oidc-provider = ["jwt"]  # -> + [dep:openidconnect]
 
-# Convenience: every implemented feature (standard Cargo convention).
+# Convenience: every implemented in-package feature (standard Cargo convention).
 full = [
-    "axum", "sqlx-postgres", "memory-adapter",
+    "axum", "jwe",
     "access", "organization", "admin",
     "two-factor", "magic-link", "email-otp", "phone-number",
-    "bearer", "api-key", "jwt", "oidc-provider",
+    "bearer", "jwt", "oidc-provider",
 ]
 
 # Declared post-v1 with the same upstream names (never renamed): anonymous, username,
 # generic-oauth, multi-session, captcha, haveibeenpwned, device-authorization, one-tap,
 # one-time-token, open-api, custom-session, additional-fields, last-login-method, mcp,
-# oauth-proxy, oauth-popup, passkey, siwe, sso, scim, stripe, oauth-provider.
+# oauth-proxy, oauth-popup, siwe.

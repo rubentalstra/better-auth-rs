@@ -77,6 +77,24 @@ fn upstream_sha() -> String {
         .unwrap_or_else(|| "UNSET".to_string())
 }
 
+/// The `better-auth-rs-utils` crate ports the *separate* `@better-auth/utils` npm package, pinned in
+/// its own `UPSTREAM` file (a different repo than `UPSTREAM_PORTED`). Rows under that crate get this
+/// commit so the manifest's `upstream_sha` column stays truthful per origin.
+const UTILS_UPSTREAM_PATH: &str = "crates/better-auth-rs-utils/UPSTREAM";
+const UTILS_PREFIX: &str = "crates/better-auth-rs-utils/";
+
+fn utils_upstream_sha() -> Option<String> {
+    fs::read_to_string(UTILS_UPSTREAM_PATH).ok().and_then(|s| {
+        s.lines()
+            .find_map(|l| {
+                l.trim()
+                    .strip_prefix("commit:")
+                    .map(|v| v.trim().to_string())
+            })
+            .filter(|s| !s.is_empty())
+    })
+}
+
 /// `vendor`: copy each portable upstream source (+ its sibling `*.test.ts`) into the crate
 /// `src/` at its rust sibling's directory, then (re)write the manifest.
 fn vendor(from: &str) -> Result<String, String> {
@@ -186,9 +204,18 @@ fn write_manifest(
     sha: &str,
 ) -> Result<(), String> {
     fs::create_dir_all("port").map_err(|e| e.to_string())?;
+    let utils_sha = utils_upstream_sha();
     let mut out = String::from(MANIFEST_HEADER);
     for (ts, loc, rust, status, conf) in rows {
-        out.push_str(&format!("{ts}\t{loc}\t{rust}\t{status}\t{conf}\t{sha}\n"));
+        // Rows under the utils crate track a different upstream repo (@better-auth/utils).
+        let row_sha = if ts.starts_with(UTILS_PREFIX) {
+            utils_sha.as_deref().unwrap_or(sha)
+        } else {
+            sha
+        };
+        out.push_str(&format!(
+            "{ts}\t{loc}\t{rust}\t{status}\t{conf}\t{row_sha}\n"
+        ));
     }
     fs::write(MANIFEST_PATH, out).map_err(|e| e.to_string())
 }
@@ -337,7 +364,17 @@ fn rust_file_name(base: &str, root_index: bool) -> String {
             "mod.rs".into()
         }
     } else {
-        format!("{}.rs", snake(stem))
+        let stem = snake(stem);
+        // `type` is a Rust reserved keyword (`mod type;` is illegal, `r#type` is avoided), so a
+        // `type.ts` source becomes `types.rs` — pluralize the keyword. This is the one
+        // reserved-keyword filename in the upstream tree; both `db/type.ts` and
+        // `@better-auth/utils`' `type.ts` map to `types.rs` this way.
+        let stem = if stem == "type" {
+            "types".to_string()
+        } else {
+            stem
+        };
+        format!("{stem}.rs")
     }
 }
 

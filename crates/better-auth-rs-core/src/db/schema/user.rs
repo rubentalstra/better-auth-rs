@@ -3,10 +3,10 @@
 use serde::{Deserialize, Serialize};
 use time::OffsetDateTime;
 
-use crate::db::field::{DbFieldType, DefaultValue, FieldAttribute};
+use crate::db::types::{DbFieldType, DefaultValue, FieldAttribute};
 
 /// Base user record (port of `BaseUser` from `userSchema`). Instances may carry additional
-/// fields from options/plugins; those are handled dynamically via [`crate::db::field::Row`].
+/// fields from options/plugins; those are handled dynamically via [`crate::db::types::Row`].
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct User {

@@ -1,0 +1,16 @@
+[package]
+name = "better-auth-rs-sso"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "Rust port of @better-auth/sso. Upstream TypeScript is co-located in src/ as the porting spec; port in progress."
+# Co-located upstream .ts references are read-only porting aids — never published.
+exclude = ["**/*.ts"]
+
+[lints]
+workspace = true
+
+[dependencies]
