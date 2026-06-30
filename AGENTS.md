@@ -2,12 +2,16 @@
 
 A faithful, file-by-file Rust port of [better-auth](https://github.com/better-auth/better-auth).
 Each upstream `.ts` source is **co-located inside the crate `src/`**, right next to where its
-`.rs` goes (e.g. `crates/better-auth-rs/src/crypto/password.ts` beside `password.rs`) — Bun's
-"siblings, not compiled, not shipped, deleted at the end" model. The `.ts` is the **source of
-truth for intended behavior**; Cargo ignores it, `exclude = ["**/*.ts"]` keeps it unpublished,
-and it's deleted once a file is fully ported. The baseline is pinned in `port/UPSTREAM_PORTED`,
-every file tracked in `port/manifest.tsv`. (`reference/better-auth/` now holds only the
-upstream `test/`, `e2e/`, and `LICENSE.md`.) We translate 1:1 into idiomatic async Rust and
+`.rs` goes (e.g. `crates/better-auth-rs/src/crypto/password.ts` beside `password.rs`) — "siblings,
+not compiled, not shipped". The `.ts` is the **source of truth for intended behavior**; Cargo
+ignores it and `exclude = ["**/*.ts"]` keeps it unpublished.
+
+**Keep every `.ts` permanently — NEVER delete a `.ts`, even after its `.rs` is fully ported.** The
+co-located `.ts` set is how we know the port is complete (1:1 coverage at a glance), it is the
+read-only spec we re-diff against on every upstream sync, and it is the fixture the TS-vs-Rust
+differential harness drives. Deleting them loses that. The baseline is pinned in
+`port/UPSTREAM_PORTED`, every file tracked in `port/manifest.tsv`. (`reference/better-auth/` holds
+the upstream `test/`, `e2e/`, and `LICENSE.md`.) We translate 1:1 into idiomatic async Rust and
 prove each port with ported tests + a TS-vs-Rust differential harness.
 
 > `CLAUDE.md` is a symlink to this file. Per-directory `CLAUDE.md` files add local detail
@@ -44,8 +48,9 @@ to `docs/` (Fumadocs site) and the vendored TS reference server the differential
 
 1. **The reference is the spec.** For any behavior, open the co-located sibling `.ts` (same
    folder as the `.rs`), understand it, then make the Rust match — **bug-for-bug**. Don't
-   "fix" apparent upstream bugs during a port; file them, match the behavior. Delete the `.ts`
-   once its `.rs` is fully ported and green.
+   "fix" apparent upstream bugs during a port; file them, match the behavior. **Keep the `.ts`
+   afterward — never delete it** (it stays as the 1:1 spec, the re-sync diff target, and the
+   differential-harness fixture).
 2. **Idiomatic async Rust.** `tokio` + `async`/`await`; `async-trait` only at `dyn` boundaries.
    (Unlike Bun's Zig→Rust port, we do NOT ban async — better-auth is Promise-based.)
 3. **Keep it diffable.** Preserve control flow, ordering, names, and comments close to upstream
@@ -78,4 +83,4 @@ to `docs/` (Fumadocs site) and the vendored TS reference server the differential
 - **Update `port/manifest.tsv`** whenever you port/advance a file.
 - **Be humble and honest** in commits/PRs — never overstate what works.
 - **Absolute paths** in tooling; **never edit a co-located `.ts`** (it's the read-only spec) —
-  port into the `.rs` sibling, then delete the `.ts` when done.
+  port into the `.rs` sibling and **keep the `.ts`** (never delete it; we keep the codebase 1:1).
