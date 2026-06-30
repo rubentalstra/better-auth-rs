@@ -1,0 +1,25 @@
+[package]
+name = "better-auth-rs-sqlx-adapter"
+version = "0.0.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+authors.workspace = true
+description = "PostgreSQL DatabaseAdapter for better-auth-rs, backed by SQLx (dynamic QueryBuilder)."
+exclude = ["**/*.ts"]
+
+[lints]
+workspace = true
+
+[dependencies]
+better-auth-rs-core = { workspace = true }
+async-trait = { workspace = true }
+sqlx = { workspace = true, features = ["json", "time", "uuid"] }
+serde_json = { workspace = true }
+time = { workspace = true }
+uuid = { workspace = true }
+
+[dev-dependencies]
+better-auth-rs-test-utils = { workspace = true }
+tokio = { workspace = true }

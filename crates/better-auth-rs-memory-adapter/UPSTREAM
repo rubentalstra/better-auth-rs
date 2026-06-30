@@ -1,0 +1,5 @@
+@better-auth/memory-adapter
+repo: https://github.com/better-auth/better-auth (packages/memory-adapter)
+version: v1.6.22
+commit: a90d061de7cdbd60e796230aadf5d1082add1fe2
+

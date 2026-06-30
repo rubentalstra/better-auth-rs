@@ -1,6 +1,27 @@
 [workspace]
 resolver = "3"
-members = ["crates/better-auth-rs-core", "crates/better-auth-rs", "xtask"]
+members = [
+    # foundational
+    "crates/better-auth-rs-core",
+    "crates/better-auth-rs-utils",
+    # the main published crate (packages/better-auth)
+    "crates/better-auth-rs",
+    # adapters
+    "crates/better-auth-rs-memory-adapter",
+    "crates/better-auth-rs-sqlx-adapter",
+    "crates/better-auth-rs-test-utils",
+    # separate packages (stubs awaiting their porting phase)
+    "crates/better-auth-rs-api-key",
+    "crates/better-auth-rs-cli",
+    "crates/better-auth-rs-oauth-provider",
+    "crates/better-auth-rs-passkey",
+    "crates/better-auth-rs-redis-storage",
+    "crates/better-auth-rs-scim",
+    "crates/better-auth-rs-sso",
+    "crates/better-auth-rs-stripe",
+    "crates/better-auth-rs-telemetry",
+    "xtask",
+]
 
 [workspace.package]
 edition = "2024"
@@ -21,6 +42,10 @@ categories = ["authentication", "web-programming"]
 [workspace.dependencies]
 # internal
 better-auth-rs-core = { path = "crates/better-auth-rs-core", version = "0.0.0" }
+better-auth-rs-utils = { path = "crates/better-auth-rs-utils", version = "0.0.0" }
+better-auth-rs-memory-adapter = { path = "crates/better-auth-rs-memory-adapter", version = "0.0.0" }
+better-auth-rs-sqlx-adapter = { path = "crates/better-auth-rs-sqlx-adapter", version = "0.0.0" }
+better-auth-rs-test-utils = { path = "crates/better-auth-rs-test-utils", version = "0.0.0" }
 
 # web / async
 http = "1.4.2"
@@ -51,10 +76,15 @@ hex = "0.4.3"
 zeroize = "1.9.0"
 chacha20poly1305 = "0.11.0"
 aes-gcm = "0.11.0"
+hkdf = "0.13.0"
+unicode-normalization = "0.1.25"
 
 # jwt / oauth
 jsonwebtoken = "10.4.0"
 jose-jwk = "0.1.2"
+# JWE A256CBC-HS512 (optional, behind the `jwe` feature). `vendored` builds OpenSSL from
+# source so no system OpenSSL is required.
+josekit = { version = "0.10.3", features = ["vendored"] }
 openidconnect = "4.0.1"
 
 # validation / serde
@@ -64,7 +94,9 @@ garde = { version = "0.23.0", features = ["derive"] }
 
 # http client / cookies / url / time / ids
 reqwest = { version = "0.13.4", default-features = false, features = ["json", "rustls-tls"] }
-cookie = { version = "0.18.1", features = ["percent-encode", "signed", "private"] }
+# We do our own HMAC signing + encryption (to match better-auth's wire format), so the
+# `signed`/`private` jars aren't needed — only attribute serialization/parsing.
+cookie = { version = "0.18.1", features = ["percent-encode"] }
 url = "2.5.8"
 time = { version = "0.3.51", features = ["serde", "serde-well-known"] }
 uuid = { version = "1.23.4", features = ["v4", "v7", "serde"] }
